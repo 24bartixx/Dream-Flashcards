@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "377611688875",
+    "project_id": "dream-flashcards-project",
+    "storage_bucket": "dream-flashcards-project.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:377611688875:android:6659525a225f31f239d0ee",
+        "android_client_info": {
+          "package_name": "com.example.dreamflashcards"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "377611688875-5ss1gavalqca4u1kjbq571kv9p6pr3js.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.dreamflashcards",
+            "certificate_hash": "d65b080d2698f956c7565c5de1bee72cf0e39487"
+          }
+        },
+        {
+          "client_id": "377611688875-5cf111lq7r85980fp3r5r6qdfirsh1pa.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDqfhhOMGxEM-4hELFNqyZ1JuHx9t1dkyE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "377611688875-5cf111lq7r85980fp3r5r6qdfirsh1pa.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

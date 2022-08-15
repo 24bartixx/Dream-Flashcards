@@ -1,0 +1,53 @@
+<resources>
+    <string name="app_name">Dream Flashcards</string>
+
+    <!-- options menu -->
+    <string name="sign_out_text">Sign out</string>
+    <string name="settings_text">Settings</string>
+
+    <!-- bottom nav menu -->
+    <string name="sets_text">Sets</string>
+    <string name="create_text">Create</string>
+    <string name="download_text">Download</string>
+
+    <!-- Login Activity -->
+    <string name="login_text">Login</string>
+    <string name="email_hint">Email</string>
+    <string name="password_hint">Password</string>
+    <string name="forgot_password_text">Forgot password?</string>
+    <string name="not_have_account">Not have account? <b>Sign up</b></string>
+    <string name="or_text">OR</string>
+    <string name="sign_in_with_google">Sign in with Google</string>
+    <string name="sign_in_with_facebook">Sign in with Facebook</string>
+
+    <!-- Sign Up Activity -->
+    <string name="signup_text">Sign Up</string>
+    <string name="repeat_password_hint">Repeat password</string>
+    <string name="create_account_text">Create account</string>
+
+    <!-- Create Fragment -->
+    <string name="input_text_set_name_hint">name</string>
+    <string name="choose_flashcards_name">Choose the name of your set</string>
+    <string name="create_set_button_text">Create set</string>
+
+    <!-- Add Flashcards Fragment -->
+    <string name="add_flashcards_text">Add Flashcards</string>
+    <string name="add_new_flashcard">Add Flashcard</string>
+
+    <!-- Create Flashcard Fragment -->
+    <string name="term_text_hint">Term</string>
+    <string name="definition_text_hint">Definition</string>
+    <string name="enter_flashcard_term_helper_text">Enter the term</string>
+    <string name="enter_flashcard_definition_helper_text">Enter the definition</string>
+    <string name="create_flashcard_button_text">Create flashcard</string>
+
+    <!-- Sets Fragment -->
+    <string name="set_name"><b>Name</b>: %1$s</string>
+    <string name="word_count"><b>Words</b>: %1$d/%2$d</string>
+
+    <!-- Strings required for Facebook Authentication -->
+    <string name="facebook_app_id">583291003294329</string>
+    <string name="fb_login_protocol_scheme">fb583291003294329</string>
+    <string name="facebook_client_token">a035f2bd445e59ca0442c32fc4e135b6</string>
+
+</resources>

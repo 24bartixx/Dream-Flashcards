@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    app:cardElevation="6dp"
+    app:cardCornerRadius="16dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:descendantFocusability="blocksDescendants"
+        android:padding="12dp">
+
+        <TextView
+            android:id="@+id/term"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:paddingVertical="4dp"
+            android:paddingHorizontal="8dp"
+            android:gravity="center"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="@color/black"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/modify_button"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Termhb jnkj jj ijj khhbhjbhj, iuhi"
+            style="@style/TextAppearance.MaterialComponents.Body2"/>
+
+        <Button
+            android:id="@+id/modify_button"
+            android:layout_width="37dp"
+            android:layout_height="46dp"
+            android:layout_margin="8dp"
+            android:drawableTop="@drawable/ic_edit"
+            android:drawableTint="@color/white"
+            android:paddingTop="7dp"
+            app:layout_constraintEnd_toStartOf="@id/delete_button"
+            app:layout_constraintTop_toTopOf="@id/term"
+            app:layout_constraintBottom_toBottomOf="@+id/term"/>
+
+        <Button
+            android:id="@+id/delete_button"
+            android:layout_width="37dp"
+            android:layout_height="46dp"
+            android:layout_margin="8dp"
+            android:paddingTop="7dp"
+            android:drawableTop="@drawable/ic_baseline_delete_24"
+            android:drawableTint="@color/white"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/modify_button"
+            app:layout_constraintBottom_toBottomOf="@id/modify_button"/>
+
+        <TextView
+            android:id="@+id/definition"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="4dp"
+            android:textSize="20sp"
+            android:gravity="center"
+            app:layout_constraintTop_toBottomOf="@id/term"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:text="Siuuu Vamos I'm createing an app and I will succeed"
+            style="@style/TextAppearance.MaterialComponents.Body2"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</com.google.android.material.card.MaterialCardView>
