@@ -2,33 +2,52 @@ package com.example.dreamflashcards.adapters
 
 import android.content.Context
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.example.dreamflashcards.R
+import com.example.dreamflashcards.databinding.SetRecyclerviewItemBinding
 import com.example.dreamflashcards.models.FlashcardsSet
 
-class SetsAdapter(private val context: Context, private val sets: List<FlashcardsSet>):
-    RecyclerView.Adapter<SetsAdapter.SetViewHolder>() {
+class SetsAdapter(private val context: Context, private val goToNextScreen: (FlashcardsSet) -> Unit):
+    ListAdapter<FlashcardsSet, SetsAdapter.SetViewHolder>(DiffCallback) {
 
-   class SetViewHolder(private val view: View): RecyclerView.ViewHolder(view) {
-        val name = view.findViewById<TextView>(R.id.set_name)
-        val wordsCount = view.findViewById<TextView>(R.id.words_count)
+   class SetViewHolder(private var binding: SetRecyclerviewItemBinding): RecyclerView.ViewHolder(binding.root) {
+
+       fun bind(flashcardsSet: FlashcardsSet, context: Context){
+           binding.setName.text = flashcardsSet.name
+           binding.wordsCount.text = "${flashcardsSet.wordsCount}/215"
+       }
+
    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SetViewHolder {
-        val layoutInflater = LayoutInflater.from(parent.context).inflate(R.layout.set_recyclerview_item, parent, false)
-        return SetViewHolder(layoutInflater)
+        return SetViewHolder(SetRecyclerviewItemBinding.inflate(LayoutInflater.from(parent.context), parent, false))
     }
 
     override fun onBindViewHolder(holder: SetViewHolder, position: Int) {
-        holder.name.text = context.getString(R.string.set_name, sets[position].name)
-        holder.wordsCount.text = context.getString(R.string.word_count, 5, sets[position].wordsCount)
+
+        val flashcardsSet = getItem(position)
+        holder.bind(flashcardsSet, context)
+
+        holder.itemView.setOnClickListener{
+            goToNextScreen(flashcardsSet)
+        }
+
     }
 
-    override fun getItemCount(): Int {
-        return sets.size
+    companion object {
+        private val DiffCallback = object: DiffUtil.ItemCallback<FlashcardsSet>() {
+
+            override fun areItemsTheSame(oldItem: FlashcardsSet, newItem: FlashcardsSet): Boolean {
+                return oldItem == newItem
+            }
+
+            override fun areContentsTheSame(oldItem: FlashcardsSet, newItem: FlashcardsSet): Boolean {
+                return oldItem.setID == newItem.setID
+            }
+
+        }
     }
 
 

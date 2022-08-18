@@ -2,22 +2,18 @@ package com.example.dreamflashcards.fragments
 
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.dreamflashcards.adapters.SetsAdapter
-import com.example.dreamflashcards.databinding.FragmentCreateBinding
 import com.example.dreamflashcards.databinding.FragmentSetsBinding
-import com.example.dreamflashcards.models.Flashcard
-import com.example.dreamflashcards.models.FlashcardsSet
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
+import com.example.dreamflashcards.viewmodels.AppViewModel
 
 class SetsFragment : Fragment() {
 
@@ -28,11 +24,8 @@ class SetsFragment : Fragment() {
     // RecyclerView
     private lateinit var recyclerView: RecyclerView
 
-    // FirebaseAuth
-    private lateinit var auth: FirebaseAuth
-
-    // Firestore Database
-    private lateinit var firestoreDatabase: FirebaseFirestore
+    // AppViewModel
+    private val appViewModel: AppViewModel by activityViewModels()
 
     companion object {
         private const val TAG = "SetsFragment"
@@ -51,40 +44,57 @@ class SetsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        auth = FirebaseAuth.getInstance()
-        firestoreDatabase = Firebase.firestore
-
         /** get set documents from Firestore */
-        getSets()
+        appViewModel.getSets()
 
         /** recyclerView setup */
         recyclerView = binding.setsRecyclerview
-        recyclerView.layoutManager = LinearLayoutManager(requireContext())
-        recyclerView.adapter = SetsAdapter(requireContext(), listOf(FlashcardsSet("siuu", "Top G", auth.currentUser!!.uid, 201)))
 
-        recyclerView.setHasFixedSize(true)
+        val adapter = SetsAdapter(requireContext(), { flashcardSet ->
+
+            try {
+                appViewModel.setCurrentSet(flashcardSet)
+
+                Log.i(TAG, "Current set id: ${appViewModel.getCurrentSet().setID}")
+
+                // got to the next screen
+                Log.i(TAG, "Moving to the next screen")
+                val action = SetsFragmentDirections.actionSetsFragmentToSetOptionFragment()
+                findNavController().navigate(action)
+            } catch(e: Exception) {
+                Log.e(TAG, "Cannot set current set in viewModel due to: ${e.message}")
+                Toast.makeText(requireContext(), "Something went wrong...", Toast.LENGTH_SHORT).show()
+            }
+        })
+
+        recyclerView.adapter = adapter
+        appViewModel.sets.observe(this.viewLifecycleOwner){ sets ->
+            sets.let{
+                if(!appViewModel.sets.value.isNullOrEmpty()) {
+                    Log.d(TAG, "Sets list: ${appViewModel.sets.value}")
+                    adapter.submitList(appViewModel.sets.value)
+                }
+            }
+        }
+
+        recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
     }
 
-    /** Get sets from Firestore function */
-    private fun getSets(){
-        firestoreDatabase.collectionGroup("Sets").whereEqualTo("creator", auth.currentUser!!.uid).get()
-            .addOnSuccessListener { querySnapshot ->
+    override fun onPause(){
+        super.onPause()
+        Log.d(TAG, "onPause()")
+    }
 
-                Log.d(TAG, "Data retrieved: ${querySnapshot.documents}")
-
-            }
-            .addOnFailureListener { e ->
-
-                Log.e(TAG, "Could not retrieve data from Firestore due to: ${e.message}")
-                Toast.makeText(requireContext(), "Could not retrieve data from database", Toast.LENGTH_SHORT).show()
-
-            }
+    override fun onStop(){
+        super.onStop()
+        Log.d(TAG, "onStop()")
     }
 
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
+        Log.d(TAG, "onDestroy()")
     }
 
 }

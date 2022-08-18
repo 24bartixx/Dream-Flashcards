@@ -11,7 +11,7 @@
 
     <style name="AppButton" parent="@style/Widget.MaterialComponents.Button">
         <item name="android:padding">12dp</item>
-        <item name="android:textSize">24dp</item>
+        <item name="android:textSize">24sp</item>
         <item name="android:textAppearance">@style/TextAppearance.MaterialComponents.Headline5</item>
         <item name="android:background">@drawable/button_round_style</item>
     </style>

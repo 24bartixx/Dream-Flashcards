@@ -4,5 +4,5 @@ data class FlashcardsSet(
     val setID: String,
     val name: String,
     val creator: String,
-    val wordsCount: Int
+    val wordsCount: String
 )

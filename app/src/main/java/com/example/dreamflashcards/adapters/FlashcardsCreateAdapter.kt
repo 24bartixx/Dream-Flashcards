@@ -8,7 +8,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.dreamflashcards.databinding.FlashcardsRecyclerviewItemBinding
 import com.example.dreamflashcards.models.Flashcard
 
-class FlashcardsCreateAdapter(private val flashcardsFunctions: (Flashcard, String) -> Unit): ListAdapter<Flashcard, FlashcardsCreateAdapter.FlashcardViewHolder>(DiffCallback){
+class FlashcardsCreateAdapter(private val flashcardsFunctions: (Flashcard, String) -> Unit):
+    ListAdapter<Flashcard, FlashcardsCreateAdapter.FlashcardViewHolder>(DiffCallback){
 
     class FlashcardViewHolder(private var binding: FlashcardsRecyclerviewItemBinding): RecyclerView.ViewHolder(binding.root){
         fun bind(flashcard: Flashcard, flashcardsFunctions: (Flashcard, String) -> Unit){

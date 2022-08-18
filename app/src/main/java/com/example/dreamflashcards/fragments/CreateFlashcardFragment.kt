@@ -3,16 +3,14 @@ package com.example.dreamflashcards.fragments
 
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.navigation.fragment.findNavController
-import androidx.navigation.fragment.navArgs
-import com.example.dreamflashcards.R
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import com.example.dreamflashcards.databinding.FragmentCreateFlashcardBinding
-import com.google.firebase.auth.FirebaseAuth
+import com.example.dreamflashcards.viewmodels.AppViewModel
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -26,7 +24,8 @@ class CreateFlashcardFragment : Fragment() {
     // Firestore Database
     private lateinit var firestoreDatabase: FirebaseFirestore
 
-    private val args: CreateFlashcardFragmentArgs by navArgs()
+    // AppViewModel
+    private val appViewModel: AppViewModel by activityViewModels()
 
     private var term = ""
     private var definition = ""
@@ -73,40 +72,22 @@ class CreateFlashcardFragment : Fragment() {
             binding.definitionTextInput.editText!!.error = "Please enter the definition"
 
         } else {
-            addFlashcardToFirebase()
-        }
+            try {
 
-    }
+                // add Flashcard to Firestore
+                appViewModel.addFlashcard(term, definition)
 
-    /** Add flashcard to firebase */
-    private fun addFlashcardToFirebase(){
-
-        // HashMap pof the flashcard
-        val flashcard = hashMapOf(
-            "term" to term,
-            "definition" to definition,
-            "order" to 1
-        )
-
-        firestoreDatabase.collection("Sets").document(args.setID).collection("Flashcards")
-            .add(flashcard)
-            .addOnSuccessListener { documentReference ->
-
-                // flashcard created
-                Log.i(TAG, "DocumentSnapshot added with ID: ${documentReference.id}")
-                Toast.makeText(requireContext(), "New flashcard created", Toast.LENGTH_SHORT).show()
-
+                // set edit texts to empty string
                 binding.termTextInput.editText?.setText("")
                 binding.definitionTextInput.editText?.setText("")
 
-            }
-            .addOnFailureListener { e ->
+                Toast.makeText(requireContext(), "New flashcard created", Toast.LENGTH_SHORT).show()
 
-                // something went wrong creating a new flashcard
-                Log.e(TAG, "Creation of the flashcard in the Firestore went wrong due to: ${e.message}")
+            } catch (e: Exception) {
+                Log.d(TAG, "Error adding an flashcard dur to: ${e.message}")
                 Toast.makeText(requireContext(), "Something went wrong...", Toast.LENGTH_SHORT).show()
-
             }
+        }
 
     }
 

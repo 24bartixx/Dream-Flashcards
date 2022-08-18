@@ -3,12 +3,14 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Android/Dream Flashacrds/APP/app/src/main/res/drawable/button_learn_round_style.xml" value="0.122" />
         <entry key="..\:/Android/Dream Flashacrds/APP/app/src/main/res/drawable/button_round_style.xml" value="0.121" />
         <entry key="..\:/Android/Dream Flashacrds/APP/app/src/main/res/drawable/button_sign_in_border.xml" value="0.121" />
         <entry key="..\:/Android/Dream Flashacrds/APP/app/src/main/res/drawable/ic_baseline_create_24.xml" value="0.121" />
         <entry key="..\:/Android/Dream Flashacrds/APP/app/src/main/res/drawable/ic_baseline_delete_24.xml" value="0.121" />
         <entry key="..\:/Android/Dream Flashacrds/APP/app/src/main/res/drawable/ic_create.xml" value="0.121" />
         <entry key="..\:/Android/Dream Flashacrds/APP/app/src/main/res/drawable/ic_edit.xml" value="0.121" />
+        <entry key="..\:/Android/Dream Flashacrds/APP/app/src/main/res/drawable/ic_study.xml" value="0.1145" />
         <entry key="..\:/Android/Dream Flashacrds/APP/app/src/main/res/layout/activity_login.xml" value="0.4" />
         <entry key="..\:/Android/Dream Flashacrds/APP/app/src/main/res/layout/activity_main.xml" value="0.22663802363050484" />
         <entry key="..\:/Android/Dream Flashacrds/APP/app/src/main/res/layout/activity_signup.xml" value="0.10989583333333333" />
@@ -17,7 +19,9 @@
         <entry key="..\:/Android/Dream Flashacrds/APP/app/src/main/res/layout/fragment_create.xml" value="0.264" />
         <entry key="..\:/Android/Dream Flashacrds/APP/app/src/main/res/layout/fragment_create_flashcard.xml" value="0.10989583333333333" />
         <entry key="..\:/Android/Dream Flashacrds/APP/app/src/main/res/layout/fragment_download.xml" value="0.10989583333333333" />
+        <entry key="..\:/Android/Dream Flashacrds/APP/app/src/main/res/layout/fragment_set_option.xml" value="0.136" />
         <entry key="..\:/Android/Dream Flashacrds/APP/app/src/main/res/layout/fragment_sets.xml" value="0.10989583333333333" />
+        <entry key="..\:/Android/Dream Flashacrds/APP/app/src/main/res/layout/fragment_study.xml" value="0.176" />
         <entry key="..\:/Android/Dream Flashacrds/APP/app/src/main/res/layout/set_recyclerview_item.xml" value="0.264" />
         <entry key="..\:/Android/Dream Flashacrds/APP/app/src/main/res/menu/app_menu.xml" value="0.10989583333333333" />
         <entry key="..\:/Android/Dream Flashacrds/APP/app/src/main/res/menu/bottom_nav_menu.xml" value="0.10989583333333333" />

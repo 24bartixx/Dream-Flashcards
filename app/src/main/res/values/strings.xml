@@ -42,12 +42,25 @@
     <string name="create_flashcard_button_text">Create flashcard</string>
 
     <!-- Sets Fragment -->
-    <string name="set_name"><b>Name</b>: %1$s</string>
-    <string name="word_count"><b>Words</b>: %1$d/%2$d</string>
+    <string name="words_text"><b>Words</b>: </string>
+
+    <!-- Set Option Fragment -->
+    <string name="option_text">What would you like to do?</string>
+    <string name="unlearnt_radio_button_text">Study unlearnt flashcards</string>
+    <string name="all_radio_button_text">Revise all flashcards</string>
+    <string name="modify_radio_button_text">Modify the set</string>\
+    <string name="proceed_button_text">Proceed</string>
+    <string name="study_option">Study</string>
+    <string name="revise_option">Revise</string>
+    <string name="modify_option">Modify</string>
+
+    <!-- Study Fragment -->
+    <string name="show_definition_button_text">Show definition</string>
 
     <!-- Strings required for Facebook Authentication -->
     <string name="facebook_app_id">583291003294329</string>
     <string name="fb_login_protocol_scheme">fb583291003294329</string>
     <string name="facebook_client_token">a035f2bd445e59ca0442c32fc4e135b6</string>
-
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

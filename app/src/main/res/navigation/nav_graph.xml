@@ -26,7 +26,11 @@
         android:id="@+id/setsFragment"
         android:name="com.example.dreamflashcards.fragments.SetsFragment"
         android:label="fragment_sets"
-        tools:layout="@layout/fragment_sets" />
+        tools:layout="@layout/fragment_sets" >
+        <action
+            android:id="@+id/action_setsFragment_to_setOptionFragment"
+            app:destination="@id/setOptionFragment" />
+    </fragment>
     <fragment
         android:id="@+id/addFlashcardsFragment"
         android:name="com.example.dreamflashcards.fragments.AddFlashcardsFragment"
@@ -37,17 +41,25 @@
             app:destination="@id/createFlashcardFragment"
             app:restoreState="true"
             app:popUpToSaveState="true"/>
-        <argument
-            android:name="setID"
-            app:argType="string"/>
     </fragment>
     <fragment
         android:id="@+id/createFlashcardFragment"
         android:name="com.example.dreamflashcards.fragments.CreateFlashcardFragment"
         android:label="fragment_create_flashcard"
         tools:layout="@layout/fragment_create_flashcard" >
-        <argument
-            android:name="setID"
-            app:argType="string"/>
     </fragment>
+    <fragment
+        android:id="@+id/setOptionFragment"
+        android:name="com.example.dreamflashcards.fragments.SetOptionFragment"
+        android:label="fragment_set_option"
+        tools:layout="@layout/fragment_set_option" >
+        <action
+            android:id="@+id/action_setOptionFragment_to_studyFragment"
+            app:destination="@id/studyFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/studyFragment"
+        android:name="com.example.dreamflashcards.fragments.StudyFragment"
+        android:label="fragment_study"
+        tools:layout="@layout/fragment_study" />
 </navigation>

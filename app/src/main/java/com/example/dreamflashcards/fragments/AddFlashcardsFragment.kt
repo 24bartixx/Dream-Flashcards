@@ -2,18 +2,17 @@ package com.example.dreamflashcards.fragments
 
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.dreamflashcards.R
 import com.example.dreamflashcards.adapters.FlashcardsCreateAdapter
 import com.example.dreamflashcards.databinding.FragmentAddFlashcardsBinding
-import com.example.dreamflashcards.models.Flashcard
+import com.example.dreamflashcards.viewmodels.AppViewModel
 
 class AddFlashcardsFragment : Fragment() {
 
@@ -23,7 +22,8 @@ class AddFlashcardsFragment : Fragment() {
 
     private lateinit var recyclerView: RecyclerView
 
-    private val args: AddFlashcardsFragmentArgs by navArgs()
+    // AppViewModel
+    private val appViewModel: AppViewModel by activityViewModels()
 
     companion object {
         private const val TAG = "AddFlashcardsFragment"
@@ -62,31 +62,24 @@ class AddFlashcardsFragment : Fragment() {
 
         recyclerView.adapter = adapter
 
-        adapter.submitList(listOf(
-            Flashcard("XDXD", "Some term", "Some definition"),
-            Flashcard("XDXDXD", "Some term 2 Siuuu lecimy po swoje", "Lecimy po swoje, We are fucking top Gs, we never give up"),
-            Flashcard("Siuu", "Lecimy", "Rob Gryn"),
-            Flashcard("Sss", "League of Legends", "Literally the most annoying game that was ever created"),
-            Flashcard("One more", "One more", "I need one more")))
+        appViewModel.modifyFlashcards.observe(this.viewLifecycleOwner){ modifyFlashcardsList ->
+            modifyFlashcardsList.let {
+                if(appViewModel.modifyFlashcards.value == null){
 
+                } else {
+                    Log.d(TAG, "Flashcards list: ${appViewModel.modifyFlashcards.value}")
+                    adapter.submitList(appViewModel.modifyFlashcards.value)
+                }
+            }
+        }
 
 
         /** Add a new flashcard navigation */
         binding.addFloatingActionButton.setOnClickListener {
-            val action = AddFlashcardsFragmentDirections.actionAddFlashcardsFragmentToCreateFlashcardFragment(args.setID)
+            val action = AddFlashcardsFragmentDirections.actionAddFlashcardsFragmentToCreateFlashcardFragment()
             findNavController().navigate(action)
         }
 
-    }
-
-    override fun onPause() {
-        super.onPause()
-        Log.d(TAG, "onPause()")
-    }
-
-    override fun onStop() {
-        super.onStop()
-        Log.d(TAG, "onStop()")
     }
 
     override fun onDestroy() {
