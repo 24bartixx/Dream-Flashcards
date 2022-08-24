@@ -1,6 +1,5 @@
 package com.example.dreamflashcards.adapters
 
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
@@ -9,14 +8,14 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.dreamflashcards.databinding.SetRecyclerviewItemBinding
 import com.example.dreamflashcards.models.FlashcardsSet
 
-class SetsAdapter(private val context: Context, private val goToNextScreen: (FlashcardsSet) -> Unit):
+class SetsAdapter(private val goToNextScreen: (FlashcardsSet) -> Unit):
     ListAdapter<FlashcardsSet, SetsAdapter.SetViewHolder>(DiffCallback) {
 
    class SetViewHolder(private var binding: SetRecyclerviewItemBinding): RecyclerView.ViewHolder(binding.root) {
 
-       fun bind(flashcardsSet: FlashcardsSet, context: Context){
+       fun bind(flashcardsSet: FlashcardsSet){
            binding.setName.text = flashcardsSet.name
-           binding.wordsCount.text = "${flashcardsSet.wordsCount}/215"
+           binding.wordsCount.text = "${flashcardsSet.learned}/${flashcardsSet.wordsCount}"
        }
 
    }
@@ -28,7 +27,7 @@ class SetsAdapter(private val context: Context, private val goToNextScreen: (Fla
     override fun onBindViewHolder(holder: SetViewHolder, position: Int) {
 
         val flashcardsSet = getItem(position)
-        holder.bind(flashcardsSet, context)
+        holder.bind(flashcardsSet)
 
         holder.itemView.setOnClickListener{
             goToNextScreen(flashcardsSet)

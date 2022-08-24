@@ -2,7 +2,6 @@ package com.example.dreamflashcards
 
 import android.app.ProgressDialog
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -10,6 +9,7 @@ import android.util.Log
 import android.util.Patterns
 import android.widget.Toast
 import androidx.appcompat.app.ActionBar
+import androidx.appcompat.app.AppCompatActivity
 import com.example.dreamflashcards.databinding.ActivitySignupBinding
 import com.google.firebase.auth.FirebaseAuth
 
@@ -41,8 +41,8 @@ class SignupActivity : AppCompatActivity() {
 
         // configure ProgressDialog
         progressDialog = ProgressDialog(this)
-        progressDialog.setTitle("Waiting")
-        progressDialog.setMessage("Creating account")
+        progressDialog.setTitle("Please wait...")
+        progressDialog.setMessage("Creating account...")
         progressDialog.setCanceledOnTouchOutside(false)
 
         // configure ActionBar to support navigation back

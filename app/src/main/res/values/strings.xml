@@ -33,6 +33,7 @@
     <!-- Add Flashcards Fragment -->
     <string name="add_flashcards_text">Add Flashcards</string>
     <string name="add_new_flashcard">Add Flashcard</string>
+    <string name="add_flashcards_info_text">Press  +  to add flashcards</string>
 
     <!-- Create Flashcard Fragment -->
     <string name="term_text_hint">Term</string>
@@ -56,11 +57,13 @@
 
     <!-- Study Fragment -->
     <string name="show_definition_button_text">Show definition</string>
+    <string name="congratulations_text">You learned it all!</string>
+
+    <!-- Revise Fragment -->
+    <string name="next_flashcards_text">Go to the next flashcard</string>
 
     <!-- Strings required for Facebook Authentication -->
     <string name="facebook_app_id">583291003294329</string>
     <string name="fb_login_protocol_scheme">fb583291003294329</string>
     <string name="facebook_client_token">a035f2bd445e59ca0442c32fc4e135b6</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

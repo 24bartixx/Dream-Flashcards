@@ -22,15 +22,28 @@
         android:id="@+id/add_floating_action_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
+        android:layout_marginEnd="24dp"
         android:layout_marginBottom="76dp"
         android:contentDescription="@string/add_new_flashcard"
-        android:src="@android:drawable/ic_input_add"
-        app:backgroundTint="@color/teal_700"
-        app:fabCustomSize="72dp"
+        android:src="@drawable/ic_add_flashcard"
+        app:backgroundTint="?attr/colorPrimary"
+        app:fabCustomSize="66dp"
         app:fabSize="normal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:tint="@android:color/white" />
+        app:tint="?attr/colorOnPrimary"/>
+
+    <TextView
+        android:id="@+id/add_flashcards_info"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="60dp"
+        android:textSize="20sp"
+        android:text="@string/add_flashcards_info_text"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        style="@style/TextAppearance.MaterialComponents.Body2"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

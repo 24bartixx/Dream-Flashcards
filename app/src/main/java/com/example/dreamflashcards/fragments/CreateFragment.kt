@@ -11,22 +11,12 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.example.dreamflashcards.databinding.FragmentCreateBinding
 import com.example.dreamflashcards.viewmodels.AppViewModel
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
 
 class CreateFragment : Fragment() {
 
     // view binding
     private var _binding: FragmentCreateBinding? = null
     private val binding get() = _binding!!
-
-    // Firestore Database
-    private lateinit var firestoreDatabase: FirebaseFirestore
-
-    // Firebase Authorization
-    private lateinit var auth: FirebaseAuth
 
     // AppViewModel
     private val appViewModel: AppViewModel by activityViewModels()
@@ -49,9 +39,6 @@ class CreateFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        firestoreDatabase = Firebase.firestore
-        auth = FirebaseAuth.getInstance()
-
         /** create set button click listener */
         binding.createSetButtom.setOnClickListener {
 
@@ -73,7 +60,7 @@ class CreateFragment : Fragment() {
 
                     // crete a set and go to the next screen
                     Log.d(TAG, "Moving to AddFlashcardsFragment")
-                    val action = CreateFragmentDirections.actionCreateFragmentToAddFlashcardsFragment()
+                    val action = CreateFragmentDirections.actionCreateFragmentToAddFlashcardsFragment("CreateFragment")
                     findNavController().navigate(action)
 
                 } catch (e: Exception) {

@@ -2,13 +2,12 @@ package com.example.dreamflashcards
 
 import android.app.ProgressDialog
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
-import android.util.Patterns
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import com.example.dreamflashcards.databinding.ActivityLoginBinding
 import com.facebook.AccessToken
 import com.facebook.CallbackManager
@@ -62,7 +61,7 @@ class LoginActivity : AppCompatActivity() {
 
         // prepare a ProgressDialog
         progressDialog = ProgressDialog(this)
-        progressDialog.setTitle("Waitnig")
+        progressDialog.setTitle("Please wait...")
         progressDialog.setMessage("Logging in...")
         progressDialog.setCanceledOnTouchOutside(false)
 

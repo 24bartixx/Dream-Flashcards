@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.dreamflashcards.adapters.FlashcardsCreateAdapter
@@ -24,6 +25,8 @@ class AddFlashcardsFragment : Fragment() {
 
     // AppViewModel
     private val appViewModel: AppViewModel by activityViewModels()
+
+    private val args: AddFlashcardsFragmentArgs by navArgs()
 
     companion object {
         private const val TAG = "AddFlashcardsFragment"
@@ -62,13 +65,19 @@ class AddFlashcardsFragment : Fragment() {
 
         recyclerView.adapter = adapter
 
-        appViewModel.modifyFlashcards.observe(this.viewLifecycleOwner){ modifyFlashcardsList ->
+        appViewModel.modifyFlashcards.observe(this.viewLifecycleOwner) { modifyFlashcardsList ->
             modifyFlashcardsList.let {
-                if(appViewModel.modifyFlashcards.value == null){
+                if (!appViewModel.modifyFlashcards.value.isNullOrEmpty()) {
 
-                } else {
                     Log.d(TAG, "Flashcards list: ${appViewModel.modifyFlashcards.value}")
                     adapter.submitList(appViewModel.modifyFlashcards.value)
+                    binding.addFlashcardsInfo.visibility = View.INVISIBLE
+
+                } else if(args.fromWhere == "CreateFragment") {
+
+                    Log.d(TAG, "Flashcards list empty")
+                    binding.addFlashcardsInfo.visibility = View.VISIBLE
+
                 }
             }
         }
@@ -85,6 +94,9 @@ class AddFlashcardsFragment : Fragment() {
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
+
+        appViewModel.updateSetWordsCount()
+
     }
 
 }

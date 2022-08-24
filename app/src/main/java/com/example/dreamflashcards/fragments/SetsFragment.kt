@@ -50,7 +50,7 @@ class SetsFragment : Fragment() {
         /** recyclerView setup */
         recyclerView = binding.setsRecyclerview
 
-        val adapter = SetsAdapter(requireContext(), { flashcardSet ->
+        val adapter = SetsAdapter{ flashcardSet ->
 
             try {
                 appViewModel.setCurrentSet(flashcardSet)
@@ -65,7 +65,7 @@ class SetsFragment : Fragment() {
                 Log.e(TAG, "Cannot set current set in viewModel due to: ${e.message}")
                 Toast.makeText(requireContext(), "Something went wrong...", Toast.LENGTH_SHORT).show()
             }
-        })
+        }
 
         recyclerView.adapter = adapter
         appViewModel.sets.observe(this.viewLifecycleOwner){ sets ->
