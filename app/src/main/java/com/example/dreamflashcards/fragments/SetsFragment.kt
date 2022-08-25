@@ -53,14 +53,16 @@ class SetsFragment : Fragment() {
         val adapter = SetsAdapter{ flashcardSet ->
 
             try {
+
                 appViewModel.setCurrentSet(flashcardSet)
 
                 Log.i(TAG, "Current set id: ${appViewModel.getCurrentSet().setID}")
 
                 // got to the next screen
-                Log.i(TAG, "Moving to the next screen")
+                Log.d(TAG, "Moving to the next screen")
                 val action = SetsFragmentDirections.actionSetsFragmentToSetOptionFragment()
                 findNavController().navigate(action)
+
             } catch(e: Exception) {
                 Log.e(TAG, "Cannot set current set in viewModel due to: ${e.message}")
                 Toast.makeText(requireContext(), "Something went wrong...", Toast.LENGTH_SHORT).show()
@@ -70,10 +72,12 @@ class SetsFragment : Fragment() {
         recyclerView.adapter = adapter
         appViewModel.sets.observe(this.viewLifecycleOwner){ sets ->
             sets.let{
+
                 if(!appViewModel.sets.value.isNullOrEmpty()) {
                     Log.d(TAG, "Sets list: ${appViewModel.sets.value}")
                     adapter.submitList(appViewModel.sets.value)
                 }
+
             }
         }
 
@@ -81,20 +85,9 @@ class SetsFragment : Fragment() {
 
     }
 
-    override fun onPause(){
-        super.onPause()
-        Log.d(TAG, "onPause()")
-    }
-
-    override fun onStop(){
-        super.onStop()
-        Log.d(TAG, "onStop()")
-    }
-
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
-        Log.d(TAG, "onDestroy()")
     }
 
 }

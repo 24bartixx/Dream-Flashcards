@@ -21,6 +21,10 @@ class AppViewModel: ViewModel() {
     private val _sets = MutableLiveData<MutableList<FlashcardsSet>>()
     val sets: LiveData<MutableList<FlashcardsSet>> = _sets
 
+    // download sets
+    private val _downloadSets = MutableLiveData<MutableList<FlashcardsSet>>()
+    val downloadSets: LiveData<MutableList<FlashcardsSet>> = _downloadSets
+
     // current set
     private val _currentSet = MutableLiveData<FlashcardsSet>(FlashcardsSet("Empty Current set", "", "", "", ""))
     val currentSet: LiveData<FlashcardsSet> = _currentSet
@@ -32,6 +36,10 @@ class AppViewModel: ViewModel() {
     // current set to study
     private val _currentStudySet = MutableLiveData<FlashcardsSet>(FlashcardsSet("", "", "", "", ""))
     val currentStudySet: LiveData<FlashcardsSet> = _currentStudySet
+
+    // current download set
+    private val _currentDownloadSet = MutableLiveData<FlashcardsSet>(FlashcardsSet("", "", "", "", ""))
+    val currentDownloadSet: LiveData<FlashcardsSet> = _currentDownloadSet
 
     // current set to revise
     private val _currentReviseSet = MutableLiveData<FlashcardsSet>(FlashcardsSet("", "", "", "", ""))
@@ -110,7 +118,7 @@ class AppViewModel: ViewModel() {
         firestoreDatabase.collectionGroup("Sets").whereEqualTo("creator", auth.currentUser!!.uid).get()
             .addOnSuccessListener { querySnapshot ->
 
-                Log.d(TAG, "Data retrieved: ${querySnapshot.documents}")
+                Log.d(TAG, "Sets retrieved: ${querySnapshot.documents}")
 
                 for(set in querySnapshot){
 
@@ -131,11 +139,46 @@ class AppViewModel: ViewModel() {
             }
             .addOnFailureListener { e ->
 
-                Log.e(TAG, "Could not retrieve data from Firestore due to: ${e.message}")
+                Log.e(TAG, "Could not retrieve sets from Firestore due to: ${e.message}")
 
             }
 
         return succeeded
+    }
+
+    /** Get download sets from firestore function */
+    fun getDownloadSets(): Boolean{
+
+        val list = mutableListOf<FlashcardsSet>()
+        var succeeded = false
+
+        firestoreDatabase.collectionGroup("DownloadSets").get()
+            .addOnSuccessListener { querySnapshot ->
+                Log.d(TAG, "Download sets retrieved: ${querySnapshot.documents}")
+
+                for(set in querySnapshot){
+
+                    val dataOfSet = set.data
+                    val flashcardsSet = FlashcardsSet(
+                        set.id, dataOfSet["name"].toString(), dataOfSet["creator"].toString(), dataOfSet["words_count"].toString(), dataOfSet["learned"].toString())
+                    Log.d(TAG, "flashcardsSet: ${flashcardsSet}")
+
+                    list.add(flashcardsSet)
+
+                }
+
+                Log.d(TAG, "Adding list of download sets to ViewModel: $list")
+                _downloadSets.value = list
+                Log.d(TAG, "Current list of download sets: ${downloadSets.value}")
+                succeeded = true
+
+            }
+            .addOnFailureListener { e ->
+                Log.e(TAG, "Could not retrieve download sets from Firestore due to: ${e.message}")
+            }
+
+        return succeeded
+
     }
 
     /** Get current set's flashcards to study from Firestore function */
@@ -253,7 +296,8 @@ class AppViewModel: ViewModel() {
         _modifyFlashcards.value = mutableListOf()
         _howMuchFlashcardsAdded.value = 0
 
-        firestoreDatabase.collection("Sets").document(currentSet.value!!.setID).collection("Flashcards").get()
+        firestoreDatabase.collection("Sets").document(currentSet.value!!.setID).collection("Flashcards")
+            .orderBy("created", Query.Direction.ASCENDING).get()
             .addOnSuccessListener { querySnapshot ->
 
                 Log.d(TAG, "Flashcards to modify retrieved: ${querySnapshot.documents}")
@@ -304,10 +348,10 @@ class AppViewModel: ViewModel() {
         // HashMap of the set
         val set = hashMapOf(
             "name" to name,
-            "order" to 1,
             "creator" to auth.currentUser!!.uid,
             "learned" to 0,
-            "words_count" to 0
+            "words_count" to 0,
+            "type" to "user"
         )
 
         firestoreDatabase.collection("Sets")
@@ -626,6 +670,12 @@ class AppViewModel: ViewModel() {
     fun setCurrentSet(newCurrentSet: FlashcardsSet){
         _currentSet.value = newCurrentSet
         Log.d(TAG, "New currentSet: ${currentSet.value}")
+    }
+
+    /** set current download set */
+    fun setCurrentDownloadSet(newCurrentDownloadSet: FlashcardsSet) {
+        _currentDownloadSet.value = newCurrentDownloadSet
+        Log.d(TAG, "New currentDownloadSet: ${currentDownloadSet.value}")
     }
 
     /** Get current set */

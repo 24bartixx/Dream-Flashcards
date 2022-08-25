@@ -21,7 +21,14 @@
         android:id="@+id/downloadFragment"
         android:name="com.example.dreamflashcards.fragments.DownloadFragment"
         android:label="Dream Flashcards"
-        tools:layout="@layout/fragment_download" />
+        tools:layout="@layout/fragment_download" >
+        <action
+            android:id="@+id/action_downloadFragment_to_setOptionDownloadFragment"
+            app:destination="@id/setOptionDownloadFragment"
+            app:restoreState="true"
+            app:popUpTo="@id/downloadFragment"
+            app:popUpToSaveState="true"/>
+    </fragment>
     <fragment
         android:id="@+id/setsFragment"
         android:name="com.example.dreamflashcards.fragments.SetsFragment"
@@ -88,4 +95,9 @@
         android:name="com.example.dreamflashcards.fragments.ReviseFragment"
         android:label="fragment_revise"
         tools:layout="@layout/fragment_revise" />
+    <fragment
+        android:id="@+id/setOptionDownloadFragment"
+        android:name="com.example.dreamflashcards.fragments.SetOptionDownloadFragment"
+        android:label="fragment_set_option_download"
+        tools:layout="@layout/fragment_set_option_download" />
 </navigation>

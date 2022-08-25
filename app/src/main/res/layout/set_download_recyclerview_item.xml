@@ -17,13 +17,14 @@
 
         <TextView
             android:id="@+id/set_name"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:paddingHorizontal="8dp"
             android:paddingBottom="4dp"
-            android:textSize="28sp"
+            android:textSize="20sp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/set_icon"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Top G"
             style="@style/TextAppearance.MaterialComponents.Body2"/>
@@ -33,7 +34,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingHorizontal="8dp"
-            android:textSize="18sp"
+            android:textSize="16sp"
             android:text="@string/words_text"
             app:layout_constraintTop_toBottomOf="@id/set_name"
             app:layout_constraintStart_toStartOf="parent"
@@ -43,7 +44,7 @@
             android:id="@+id/words_count"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="18sp"
+            android:textSize="16sp"
             app:layout_constraintStart_toEndOf="@id/words"
             app:layout_constraintTop_toBottomOf="@id/set_name"
             tools:text="214"
@@ -51,11 +52,11 @@
 
         <ImageView
             android:id="@+id/set_icon"
-            android:layout_width="wrap_content"
+            android:layout_width="70dp"
             android:layout_height="0dp"
             android:layout_marginVertical="8dp"
-            android:layout_marginEnd="16dp"
-            tools:srcCompat="@drawable/happy_icon"
+            android:backgroundTint="@color/black"
+            tools:srcCompat="@drawable/english_icon"
             app:layout_constraintBottom_toBottomOf="@id/words_count"
             app:layout_constraintTop_toTopOf="@id/set_name"
             app:layout_constraintEnd_toEndOf="parent" />

@@ -62,8 +62,13 @@
     <!-- Revise Fragment -->
     <string name="next_flashcards_text">Go to the next flashcard</string>
 
+    <!-- Set Option Download Fragment -->
+    <string name="browse_button_text">Browse set</string>
+    <string name="download_button_text">Download set</string>
+
     <!-- Strings required for Facebook Authentication -->
     <string name="facebook_app_id">583291003294329</string>
     <string name="fb_login_protocol_scheme">fb583291003294329</string>
     <string name="facebook_client_token">a035f2bd445e59ca0442c32fc4e135b6</string>
+
 </resources>

@@ -15,8 +15,6 @@ class FlashcardsCreateAdapter(private val flashcardsFunctions: (Flashcard, Strin
         fun bind(flashcard: Flashcard, flashcardsFunctions: (Flashcard, String) -> Unit){
             binding.term.text = flashcard.term
             binding.definition.text = flashcard.definition
-            binding.modifyButton.setOnClickListener { flashcardsFunctions(flashcard, "modify") }
-            binding.deleteButton.setOnClickListener { flashcardsFunctions(flashcard, "delete") }
         }
     }
 
