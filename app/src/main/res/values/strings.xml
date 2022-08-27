@@ -47,7 +47,7 @@
 
     <!-- Set Option Fragment -->
     <string name="option_text">What would you like to do?</string>
-    <string name="study_button_text">Study unlearned</string>
+    <string name="study_button_text">Study</string>
     <string name="revise_button_text">Revise all</string>
     <string name="modify_button_text">Modify set</string>
     <string name="delete_button_text">Delete set</string>
