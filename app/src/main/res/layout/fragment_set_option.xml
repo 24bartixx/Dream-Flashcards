@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="setOptionFragment"
+            type="com.example.dreamflashcards.fragments.SetOptionFragment"/>
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="16dp"
+        tools:context=".fragments.SetOptionFragment">
+
+        <TextView
+            android:id="@+id/set_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textSize="40sp"
+            android:textColor="@color/black"
+            app:layout_constraintBottom_toTopOf="@id/choose_option_helper_text"
+            app:layout_constraintStart_toStartOf="parent"
+            style="@style/TextAppearance.MaterialComponents.Headline4"
+            tools:text="Top Gun"/>
+
+        <TextView
+            android:id="@+id/choose_option_helper_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="32dp"
+            android:gravity="center"
+            android:textSize="22sp"
+            android:text="@string/option_text"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/study_button"
+            style="@style/TextAppearance.MaterialComponents.Body2"/>
+
+        <View
+            android:id="@+id/study_button"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginBottom="16dp"
+            android:layout_marginHorizontal="16dp"
+            android:backgroundTint="@color/primary"
+            android:background="@drawable/button_round_style"
+            android:onClick="@{() -> setOptionFragment.studyFlashcards()}"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/revise_button"/>
+
+        <ImageView
+            android:id="@+id/study_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            app:srcCompat="@drawable/ic_study"
+            app:layout_constraintStart_toStartOf="@id/study_button"
+            app:layout_constraintTop_toTopOf="@id/study_button"
+            app:layout_constraintBottom_toBottomOf="@id/study_button"/>
+
+        <View
+            android:id="@+id/study_divider"
+            android:layout_width="2dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="16dp"
+            android:background="@color/white"
+            app:layout_constraintBottom_toBottomOf="@id/study_button"
+            app:layout_constraintTop_toTopOf="@id/study_button"
+            app:layout_constraintStart_toEndOf="@id/study_icon"/>
+
+        <TextView
+            android:id="@+id/study_text"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="16dp"
+            android:textColor="@color/white"
+            android:textSize="22sp"
+            android:text="@string/study_button_text"
+            app:layout_constraintStart_toEndOf="@id/study_divider"
+            app:layout_constraintTop_toTopOf="@id/study_icon"
+            app:layout_constraintBottom_toBottomOf="@id/study_icon"/>
+
+        <View
+            android:id="@+id/revise_button"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginBottom="52dp"
+            android:layout_marginHorizontal="16dp"
+            android:backgroundTint="@color/primary"
+            android:background="@drawable/button_round_style"
+            android:onClick="@{() -> setOptionFragment.reviseFlashcards()}"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"/>
+
+        <ImageView
+            android:id="@+id/revise_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            app:srcCompat="@drawable/ic_study"
+            app:layout_constraintStart_toStartOf="@id/revise_button"
+            app:layout_constraintTop_toTopOf="@id/revise_button"
+            app:layout_constraintBottom_toBottomOf="@id/revise_button"/>
+
+        <View
+            android:id="@+id/revise_divider"
+            android:layout_width="2dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="16dp"
+            android:background="@color/white"
+            app:layout_constraintBottom_toBottomOf="@id/revise_button"
+            app:layout_constraintTop_toTopOf="@id/revise_button"
+            app:layout_constraintStart_toEndOf="@id/revise_icon"/>
+
+        <TextView
+            android:id="@+id/revise_text"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="16dp"
+            android:textColor="@color/white"
+            android:textSize="22sp"
+            android:text="@string/revise_button_text"
+            app:layout_constraintStart_toEndOf="@id/revise_divider"
+            app:layout_constraintTop_toTopOf="@id/revise_icon"
+            app:layout_constraintBottom_toBottomOf="@id/revise_icon"/>
+
+        <View
+            android:id="@+id/divider_left"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_marginLeft="16dp"
+            android:background="#000000"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/or_divider_text"
+            app:layout_constraintTop_toTopOf="@id/or_divider_text"
+            app:layout_constraintBottom_toBottomOf="@id/or_divider_text"/>
+
+        <TextView
+            android:id="@+id/or_divider_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="24dp"
+            android:text="@string/or_text"
+            android:textColor="#000000"
+            app:layout_constraintStart_toEndOf="@id/divider_left"
+            app:layout_constraintEnd_toStartOf="@id/divider_right"
+            app:layout_constraintTop_toBottomOf="@id/revise_button"/>
+
+        <View
+            android:id="@+id/divider_right"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_marginRight="16dp"
+            android:background="#000000"
+            app:layout_constraintStart_toEndOf="@id/or_divider_text"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/or_divider_text"
+            app:layout_constraintBottom_toBottomOf="@id/or_divider_text"/>
+        <View
+            android:id="@+id/modify_button"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginHorizontal="16dp"
+            android:backgroundTint="@color/primary"
+            android:background="@drawable/button_round_style"
+            android:onClick="@{() -> setOptionFragment.modifyFlashcards()}"
+            app:layout_constraintTop_toBottomOf="@id/or_divider_text"
+            app:layout_constraintStart_toStartOf="parent"/>
+
+        <ImageView
+            android:id="@+id/modify_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            app:srcCompat="@drawable/ic_modify"
+            app:layout_constraintStart_toStartOf="@id/modify_button"
+            app:layout_constraintTop_toTopOf="@id/modify_button"
+            app:layout_constraintBottom_toBottomOf="@id/modify_button"/>
+
+        <View
+            android:id="@+id/modify_divider"
+            android:layout_width="2dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="16dp"
+            android:background="@color/white"
+            app:layout_constraintBottom_toBottomOf="@id/modify_button"
+            app:layout_constraintTop_toTopOf="@id/modify_button"
+            app:layout_constraintStart_toEndOf="@id/modify_icon"/>
+
+        <TextView
+            android:id="@+id/modify_text"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="16dp"
+            android:textColor="@color/white"
+            android:textSize="22sp"
+            android:text="@string/modify_button_text"
+            app:layout_constraintStart_toEndOf="@id/modify_divider"
+            app:layout_constraintTop_toTopOf="@id/modify_icon"
+            app:layout_constraintBottom_toBottomOf="@id/modify_icon"/>
+
+        <View
+            android:id="@+id/delete_button"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginHorizontal="16dp"
+            android:backgroundTint="@color/primary"
+            android:background="@drawable/button_round_style"
+            android:onClick="@{() -> setOptionFragment.deleteFlashcards()}"
+            app:layout_constraintTop_toBottomOf="@id/modify_button"
+            app:layout_constraintStart_toStartOf="parent"/>
+
+        <ImageView
+            android:id="@+id/delete_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            app:srcCompat="@drawable/ic_delete"
+            app:layout_constraintStart_toStartOf="@id/delete_button"
+            app:layout_constraintTop_toTopOf="@id/delete_button"
+            app:layout_constraintBottom_toBottomOf="@id/delete_button"/>
+
+        <View
+            android:id="@+id/delete_divider"
+            android:layout_width="2dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="16dp"
+            android:background="@color/white"
+            app:layout_constraintBottom_toBottomOf="@id/delete_button"
+            app:layout_constraintTop_toTopOf="@id/delete_button"
+            app:layout_constraintStart_toEndOf="@id/delete_icon"/>
+
+        <TextView
+            android:id="@+id/delete_text"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="16dp"
+            android:textColor="@color/white"
+            android:textSize="22sp"
+            android:text="@string/delete_button_text"
+            app:layout_constraintStart_toEndOf="@id/delete_divider"
+            app:layout_constraintTop_toTopOf="@id/delete_icon"
+            app:layout_constraintBottom_toBottomOf="@id/delete_icon"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
