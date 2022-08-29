@@ -17,13 +17,14 @@
 
         <TextView
             android:id="@+id/set_name"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:paddingHorizontal="8dp"
             android:paddingBottom="4dp"
             android:textSize="20sp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/set_icon"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Top G"
             style="@style/TextAppearance.MaterialComponents.Body2"/>
@@ -48,6 +49,17 @@
             app:layout_constraintTop_toBottomOf="@id/set_name"
             tools:text="46/214"
             style="@style/TextAppearance.MaterialComponents.Body2"/>
+
+        <ImageView
+            android:id="@+id/set_icon"
+            android:layout_width="70dp"
+            android:layout_height="0dp"
+            android:layout_marginVertical="8dp"
+            android:backgroundTint="@color/black"
+            tools:srcCompat="@drawable/english_icon"
+            app:layout_constraintBottom_toBottomOf="@id/words_count"
+            app:layout_constraintTop_toTopOf="@id/set_name"
+            app:layout_constraintEnd_toEndOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

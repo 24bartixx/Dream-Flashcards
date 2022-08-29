@@ -11,6 +11,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.dreamflashcards.R
 import com.example.dreamflashcards.adapters.DownloadsAdapter
 import com.example.dreamflashcards.databinding.FragmentDownloadBinding
 import com.example.dreamflashcards.viewmodels.AppViewModel
@@ -43,6 +44,8 @@ class DownloadFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        Log.d(TAG, "English imagee: ${R.drawable.english_icon}")
+
         /** get set documents from Firestore */
         appViewModel.getDownloadSets()
 
@@ -56,6 +59,7 @@ class DownloadFragment : Fragment() {
 
                 // got to the next screen
                 Log.d(TAG, "Moving to the next screen")
+                appViewModel.resetDownloadComplete()
                 val action = DownloadFragmentDirections.actionDownloadFragmentToSetOptionDownloadFragment()
                 findNavController().navigate(action)
 

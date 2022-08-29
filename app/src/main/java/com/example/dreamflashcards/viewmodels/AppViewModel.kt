@@ -46,6 +46,10 @@ class AppViewModel: ViewModel() {
     private val _currentReviseSet = MutableLiveData<FlashcardsSet>(FlashcardsSet("", "", "", "", "", "", ""))
     val currentReviseSet: LiveData<FlashcardsSet> = _currentReviseSet
 
+    // set id needed for downloading
+    private val _downloadSetID = MutableLiveData<String>("")
+    val downloadSetID: LiveData<String> = _downloadSetID
+
     // how many* flashcards added
     private val _howMuchFlashcardsAdded = MutableLiveData<Int>(0)
     val howMuchFlashcardsAdded: LiveData<Int> = _howMuchFlashcardsAdded
@@ -92,6 +96,14 @@ class AppViewModel: ViewModel() {
     // indicates whether the set is learned or not
     private val _studySetStudied = MutableLiveData<Boolean>(false)
     val studySetStudied: LiveData<Boolean> = _studySetStudied
+
+    // indicates whether the download set was added to Firestore
+    private val _downloadSetAddedToFirestore = MutableLiveData<Boolean>(false)
+    val downloadSetAddedToFirestore: LiveData<Boolean> = _downloadSetAddedToFirestore
+
+    // indicated whether the download is completed
+    private val _downloadComplete = MutableLiveData<Boolean>(false)
+    val downloadComplete: LiveData<Boolean> = _downloadComplete
 
     // FirebaseAuth
     private var auth: FirebaseAuth
@@ -380,9 +392,12 @@ class AppViewModel: ViewModel() {
                         "0"
                     )
 
-                    Log.d(TAG, "Term 1: $")
-                    //val flashcardObject = Flashcard(documentSnapshot.id, documentSnapshot.data[""])
+                    list.add(flashcardObject)
+
                 }
+
+                _downloadFlashcards.value = list
+                Log.d(TAG, "Current list of download flashcards: ${downloadFlashcards.value}")
 
             }
             .addOnFailureListener { e ->
@@ -420,6 +435,61 @@ class AppViewModel: ViewModel() {
 
                 Log.e(TAG, "Creation of the set in the Firestore went wrong due to: ${e.message}")
 
+            }
+
+    }
+
+    /** Add one download set to Firestore */
+    fun addDownloadSet(){
+
+        // HashMap of the set
+        val set = hashMapOf(
+            "name" to currentDownloadSet.value!!.name,
+            "creator" to auth.currentUser!!.uid,
+            "learned" to 0,
+            "words_count" to currentDownloadSet.value!!.wordsCount,
+            "type" to currentDownloadSet.value!!.type,
+            "picture" to currentDownloadSet.value!!.picture
+        )
+
+        _downloadSetAddedToFirestore.value = false
+
+        firestoreDatabase.collection("Sets").add(set)
+            .addOnSuccessListener { documentReference ->
+                Log.d(TAG, "Download set added to user's sets with id: ${documentReference.id}")
+                _downloadSetID.value = documentReference.id
+                _downloadSetAddedToFirestore.value = true
+                _downloadFlashcards.value = downloadFlashcards.value
+            }
+            .addOnFailureListener { e ->
+                Log.e(TAG, "Failed to add download set to user's sets")
+            }
+
+    }
+
+    /** Add download flashcards to Firestore */
+    fun addDownloadFlashcards(){
+
+        val flashcards = hashMapOf<String, String>()
+        var index = 1
+
+        for(downloadFlashcard in downloadFlashcards.value!!){
+            flashcards["term${index}"] = downloadFlashcard.term
+            flashcards["def${index}"] = downloadFlashcard.definition
+            flashcards["term${index}learned"] = "no"
+            index += 1
+        }
+
+        Log.d(TAG, "Adding download flashcards to Firebase: ${flashcards}")
+
+        firestoreDatabase.collection("Sets").document(downloadSetID.value!!).collection("Flashcards").add(flashcards)
+            .addOnSuccessListener { documentReference ->
+                Log.d(TAG, "Download flashcards saved in Firestore in a document with id: ${documentReference.id}")
+                _downloadComplete.value = true
+                _downloadFlashcards.value = mutableListOf()
+            }
+            .addOnFailureListener { e ->
+                Log.d(TAG, "Failed to save download flashcards due to: ${e.message}")
             }
 
     }
@@ -713,6 +783,11 @@ class AppViewModel: ViewModel() {
     fun resetReviseIndex(){
         _reviseIndex.value = 0
         Log.d(TAG, "Revise index reset to 0")
+    }
+
+    /** reset downloadComplete variable */
+    fun resetDownloadComplete(){
+        _downloadComplete.value = false
     }
 
     /** all flashcards to study are learned */

@@ -16,6 +16,7 @@ class SetsAdapter(private val goToNextScreen: (FlashcardsSet) -> Unit):
        fun bind(flashcardsSet: FlashcardsSet){
            binding.setName.text = flashcardsSet.name
            binding.wordsCount.text = "${flashcardsSet.learned}/${flashcardsSet.wordsCount}"
+           if(flashcardsSet.picture != "none") { binding.setIcon.setImageResource(flashcardsSet.picture.toInt()) }
        }
 
    }

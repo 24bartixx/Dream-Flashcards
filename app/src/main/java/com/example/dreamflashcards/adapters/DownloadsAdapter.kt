@@ -5,7 +5,6 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.example.dreamflashcards.R
 import com.example.dreamflashcards.databinding.SetDownloadRecyclerviewItemBinding
 import com.example.dreamflashcards.models.FlashcardsSet
 
@@ -15,7 +14,7 @@ class DownloadsAdapter(private val goToNextScreen: (FlashcardsSet) -> Unit): Lis
         fun bind(flashcardsSet: FlashcardsSet){
             binding.setName.text = flashcardsSet.name
             binding.wordsCount.text = flashcardsSet.wordsCount
-            binding.setIcon.setImageResource(R.drawable.english_icon)
+            binding.setIcon.setImageResource(flashcardsSet.picture.toInt())
         }
     }
 
