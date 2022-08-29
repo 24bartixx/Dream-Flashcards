@@ -24,7 +24,6 @@
             android:gravity="center"
             android:textSize="22sp"
             android:textStyle="bold"
-            android:textColor="@color/black"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Termhb jnkj jj ijj khhbhjbhj, iuhi"

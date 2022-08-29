@@ -5,5 +5,7 @@ data class FlashcardsSet(
     val name: String,
     val creator: String,
     val wordsCount: String,
-    var learned: String
+    var learned: String,
+    val type: String,
+    val picture: String
 )

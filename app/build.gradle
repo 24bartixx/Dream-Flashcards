@@ -67,6 +67,8 @@ dependencies {
     implementation 'com.facebook.android:facebook-android-sdk:latest.release'
     // Firestore implementation
     implementation 'com.google.firebase:firebase-firestore-ktx'
+    // Firebase Functions implementation
+    implementation 'com.google.firebase:firebase-functions-ktx'
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'

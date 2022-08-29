@@ -30,11 +30,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:textSize="26sp"
-                android:textColor="@color/black"
+                android:textSize="24sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                style="@style/TextAppearance.MaterialComponents.Headline3"
+                style="@style/HeadlineText"
                 tools:text="Term"/>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
@@ -62,11 +61,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:textSize="26sp"
-            android:textColor="@color/black"
+            android:textSize="24sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            style="@style/TextAppearance.MaterialComponents.Headline3"
+            style="@style/HeadlineText"
             tools:text="Definition"/>
 
         </androidx.constraintlayout.widget.ConstraintLayout>

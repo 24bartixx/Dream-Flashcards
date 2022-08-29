@@ -11,6 +11,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.functions.ktx.functions
 import com.google.firebase.ktx.Firebase
 
 class AppViewModel: ViewModel() {
@@ -26,30 +27,28 @@ class AppViewModel: ViewModel() {
     val downloadSets: LiveData<MutableList<FlashcardsSet>> = _downloadSets
 
     // current set
-    private val _currentSet = MutableLiveData<FlashcardsSet>(FlashcardsSet("Empty Current set", "", "", "", ""))
+    private val _currentSet = MutableLiveData<FlashcardsSet>(FlashcardsSet("Empty Current set", "", "", "", "", "", ""))
     val currentSet: LiveData<FlashcardsSet> = _currentSet
 
     // current set to modify
-    private val _currentCreateSet = MutableLiveData<FlashcardsSet>(FlashcardsSet("", "", "", "", ""))
+    private val _currentCreateSet = MutableLiveData<FlashcardsSet>(FlashcardsSet("", "", "", "", "", "", ""))
     val currentCreateSet: LiveData<FlashcardsSet> = _currentCreateSet
 
     // current set to study
-    private val _currentStudySet = MutableLiveData<FlashcardsSet>(FlashcardsSet("", "", "", "", ""))
+    private val _currentStudySet = MutableLiveData<FlashcardsSet>(FlashcardsSet("", "", "", "", "", "", ""))
     val currentStudySet: LiveData<FlashcardsSet> = _currentStudySet
 
     // current download set
-    private val _currentDownloadSet = MutableLiveData<FlashcardsSet>(FlashcardsSet("", "", "", "", ""))
+    private val _currentDownloadSet = MutableLiveData<FlashcardsSet>(FlashcardsSet("", "", "", "", "", "", ""))
     val currentDownloadSet: LiveData<FlashcardsSet> = _currentDownloadSet
 
     // current set to revise
-    private val _currentReviseSet = MutableLiveData<FlashcardsSet>(FlashcardsSet("", "", "", "", ""))
+    private val _currentReviseSet = MutableLiveData<FlashcardsSet>(FlashcardsSet("", "", "", "", "", "", ""))
     val currentReviseSet: LiveData<FlashcardsSet> = _currentReviseSet
 
     // how many* flashcards added
     private val _howMuchFlashcardsAdded = MutableLiveData<Int>(0)
     val howMuchFlashcardsAdded: LiveData<Int> = _howMuchFlashcardsAdded
-
-
 
     // set option
     private val _option = MutableLiveData<String>("Study")
@@ -74,6 +73,10 @@ class AppViewModel: ViewModel() {
     // Flashcards to modify
     private val _modifyFlashcards = MutableLiveData<MutableList<Flashcard>>()
     val modifyFlashcards: LiveData<MutableList<Flashcard>> = _modifyFlashcards
+
+    // Flashcards to download
+    private val _downloadFlashcards = MutableLiveData<MutableList<Flashcard>>()
+    val downloadFlashcards: LiveData<MutableList<Flashcard>> = _downloadFlashcards
 
     // flashcards to study -> latest flashcard -> time of creation
     private val _latestStudyFlashcardTime = MutableLiveData<Long>(0)
@@ -124,7 +127,13 @@ class AppViewModel: ViewModel() {
 
                     val dataOfSet = set.data
                     val flashcardsSet = FlashcardsSet(
-                        set.id, dataOfSet["name"].toString(), dataOfSet["creator"].toString(), dataOfSet["words_count"].toString(), dataOfSet["learned"].toString())
+                        set.id, dataOfSet["name"].toString(),
+                        dataOfSet["creator"].toString(),
+                        dataOfSet["words_count"].toString(),
+                        dataOfSet["learned"].toString(),
+                        dataOfSet["type"].toString(),
+                        dataOfSet["picture"].toString()
+                    )
                     Log.d(TAG, "flashcardsSet: ${flashcardsSet}")
 
                     list.add(flashcardsSet)
@@ -154,13 +163,20 @@ class AppViewModel: ViewModel() {
 
         firestoreDatabase.collectionGroup("DownloadSets").get()
             .addOnSuccessListener { querySnapshot ->
+
                 Log.d(TAG, "Download sets retrieved: ${querySnapshot.documents}")
 
                 for(set in querySnapshot){
 
                     val dataOfSet = set.data
                     val flashcardsSet = FlashcardsSet(
-                        set.id, dataOfSet["name"].toString(), dataOfSet["creator"].toString(), dataOfSet["words_count"].toString(), dataOfSet["learned"].toString())
+                        set.id, dataOfSet["name"].toString(),
+                        dataOfSet["creator"].toString(),
+                        dataOfSet["words_count"].toString(),
+                        dataOfSet["learned"].toString(),
+                        dataOfSet["type"].toString(),
+                        dataOfSet["picture"].toString()
+                    )
                     Log.d(TAG, "flashcardsSet: ${flashcardsSet}")
 
                     list.add(flashcardsSet)
@@ -185,7 +201,7 @@ class AppViewModel: ViewModel() {
     fun getFlashcardsToStudy(){
 
         val list = mutableListOf<Flashcard>()
-        _currentStudySet.value = FlashcardsSet("", "", "", "", "")
+        _currentStudySet.value = FlashcardsSet("", "", "", "", "", "", "")
         _lastStudyFlashcard.value = Flashcard("", "", "", "", "")
         _studiedWordsCount.value = 0
         _latestStudyFlashcardTime.value  = 0
@@ -239,7 +255,7 @@ class AppViewModel: ViewModel() {
     fun getFlashcardsToRevise(){
 
         val list = mutableListOf<Flashcard>()
-        _currentReviseSet.value = FlashcardsSet("", "", "", "", "")
+        _currentReviseSet.value = FlashcardsSet("", "", "", "", "", "", "")
         _reviseIndex.value = 0
         _latestReviseFlashcardTime.value  = 0
         _reviseFlashcards.value = mutableListOf()
@@ -292,7 +308,7 @@ class AppViewModel: ViewModel() {
     fun getFlashcardsToModify(){
 
         val list = mutableListOf<Flashcard>()
-        _currentCreateSet.value = FlashcardsSet("", "", "", "", "")
+        _currentCreateSet.value = FlashcardsSet("", "", "", "", "", "", "")
         _modifyFlashcards.value = mutableListOf()
         _howMuchFlashcardsAdded.value = 0
 
@@ -318,7 +334,7 @@ class AppViewModel: ViewModel() {
 
                 }
 
-                _currentCreateSet.value = FlashcardsSet("", "", "", "", "")
+                _currentCreateSet.value = FlashcardsSet("", "", "", "", "", "", "")
 
                 Log.d(TAG, "Adding list of flashcards to modify to ViewModel: $list")
                 _modifyFlashcards.value = list
@@ -329,7 +345,7 @@ class AppViewModel: ViewModel() {
                 Log.d(TAG, "New currentCreateSet: ${currentCreateSet.value}")
 
                 if(currentCreateSet.value == currentStudySet.value) {
-                    _currentStudySet.value = FlashcardsSet("", "", "", "", "")
+                    _currentStudySet.value = FlashcardsSet("", "", "", "", "", "", "")
                 }
 
 
@@ -339,11 +355,47 @@ class AppViewModel: ViewModel() {
             }
     }
 
+    /** Get current set's flashcards to download from Firestore function */
+    fun getFlashcardsToDownload(){
+
+        val list = mutableListOf<Flashcard>()
+        _downloadFlashcards.value = mutableListOf()
+
+        firestoreDatabase.collection("DownloadSets").document(currentDownloadSet.value!!.setID)
+            .collection("DownloadFlashcards").document("FlashcardsToDownload").get()
+            .addOnSuccessListener {  documentSnapshot ->
+
+                Log.d(TAG, "Flashcards to download retrieved: ${documentSnapshot}")
+
+                for(index in 1..currentDownloadSet.value!!.wordsCount.toInt()){
+
+                    val termString = "term${index}"
+                    val defString = "def${index}"
+
+                    val flashcardObject = Flashcard(
+                        documentSnapshot.id,
+                        documentSnapshot.data?.get(termString).toString(),
+                        documentSnapshot.data?.get(defString).toString(),
+                        "no",
+                        "0"
+                    )
+
+                    Log.d(TAG, "Term 1: $")
+                    //val flashcardObject = Flashcard(documentSnapshot.id, documentSnapshot.data[""])
+                }
+
+            }
+            .addOnFailureListener { e ->
+                Log.e(TAG, "Could not retrieve flashcards to download from Firestore due to: ${e.message}")
+            }
+
+    }
+
     /** Add one set to Firestore */
     fun addSet(name: String){
 
         _modifyFlashcards.value = mutableListOf()
-        _currentCreateSet.value = FlashcardsSet("", "", "", "", "")
+        _currentCreateSet.value = FlashcardsSet("", "", "", "", "", "", "")
 
         // HashMap of the set
         val set = hashMapOf(
@@ -351,14 +403,15 @@ class AppViewModel: ViewModel() {
             "creator" to auth.currentUser!!.uid,
             "learned" to 0,
             "words_count" to 0,
-            "type" to "user"
+            "type" to "user",
+            "picture" to "none"
         )
 
         firestoreDatabase.collection("Sets")
             .add(set)
             .addOnSuccessListener { documentReference ->
 
-                _currentCreateSet.value = FlashcardsSet(documentReference.id, name, auth.currentUser!!.uid, "0", "0")
+                _currentCreateSet.value = FlashcardsSet(documentReference.id, name, auth.currentUser!!.uid, "0", "0", "user", "none")
                 Log.d(TAG, "Set added to Firestore with ID: ${documentReference.id}")
                 Log.d(TAG, "New currentCreateSet: ${currentCreateSet.value}")
 
@@ -367,6 +420,22 @@ class AppViewModel: ViewModel() {
 
                 Log.e(TAG, "Creation of the set in the Firestore went wrong due to: ${e.message}")
 
+            }
+
+    }
+
+    /** Delete set from Firestore */
+    fun deleteSet(){
+
+        val path = "/Sets/" + currentSet.value!!.setID + "/Flashcards"
+
+        val deleteFn = Firebase.functions.getHttpsCallable("deleteFlashcards")
+        deleteFn.call(hashMapOf("path" to path))
+            .addOnSuccessListener {
+                Log.d(TAG, "Deleting the set")
+            }
+            .addOnFailureListener { e ->
+                Log.e(TAG, "Failed to delete the set due to: ${e.message}")
             }
 
     }
@@ -681,12 +750,6 @@ class AppViewModel: ViewModel() {
     /** Get current set */
     fun getCurrentSet(): FlashcardsSet{
         return currentSet.value!!
-    }
-
-    /** set chosen option */
-    fun setOption(setOption: String){
-        Log.d(TAG, "Setting option: ${setOption}")
-        _option.value = setOption
     }
 
 }

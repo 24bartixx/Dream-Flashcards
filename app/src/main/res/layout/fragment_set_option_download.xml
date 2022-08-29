@@ -33,11 +33,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:textColor="@color/black"
             android:layout_marginBottom="36dp"
             android:textSize="36sp"
             android:text="@{appViewModel.currentDownloadSet.name}"
-            style = "@style/TextAppearance.MaterialComponents.Headline3"
+            style = "@style/HeadlineText"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintBottom_toTopOf="@id/browse_button"
             tools:text="Top Gun"/>
@@ -62,7 +61,7 @@
             android:layout_marginTop="16dp"
             android:layout_marginHorizontal="16dp"
             android:text="@string/download_button_text"
-            android:onClick="@{() -> setOptionDownloadFragment.goToTheNextScreen()}"
+            android:onClick="@{() -> setOptionDownloadFragment.download()}"
             app:layout_constraintTop_toBottomOf="@id/browse_button"
             app:layout_constraintStart_toStartOf="parent"
             style="@style/AppButton"/>

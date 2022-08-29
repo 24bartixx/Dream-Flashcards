@@ -1,5 +1,6 @@
 package com.example.dreamflashcards.fragments
 
+import android.app.ProgressDialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -18,6 +19,9 @@ class SetOptionDownloadFragment : Fragment() {
     // AppViewModel
     private val appViewModel: AppViewModel by activityViewModels()
 
+    // ProgressDialog
+    private lateinit var progressDialog: ProgressDialog
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
@@ -31,13 +35,25 @@ class SetOptionDownloadFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // configure data binding
         binding.appViewModel = appViewModel
         binding.setOptionDownloadFragment = this
+
+        // configure progress dialog
+        progressDialog = ProgressDialog(requireContext())
+        progressDialog.setTitle("Downloading")
+        progressDialog.setMessage("Please, wait...")
+        progressDialog.setCanceledOnTouchOutside(false)
 
     }
 
     fun goToTheNextScreen(){
 
+    }
+
+    fun download() {
+        progressDialog.show()
+        appViewModel.getFlashcardsToDownload()
     }
 
     override fun onDestroy() {

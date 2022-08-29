@@ -15,5 +15,9 @@
         <item name="android:textAppearance">@style/TextAppearance.MaterialComponents.Headline5</item>
         <item name="android:background">@drawable/button_round_style</item>
     </style>
+
+    <style name="HeadlineText" parent="@style/TextAppearance.MaterialComponents.Headline4">
+        <item name="android:textColor">?attr/colorOnSurface</item>
+    </style>
     
 </resources>
