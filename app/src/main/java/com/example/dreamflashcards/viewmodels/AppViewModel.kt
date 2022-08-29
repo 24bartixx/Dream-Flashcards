@@ -27,32 +27,28 @@ class AppViewModel: ViewModel() {
     val downloadSets: LiveData<MutableList<FlashcardsSet>> = _downloadSets
 
     // current set
-    private val _currentSet = MutableLiveData<FlashcardsSet>(FlashcardsSet("Empty Current set", "", "", "", "", "", ""))
+    private val _currentSet = MutableLiveData<FlashcardsSet>(FlashcardsSet("Empty Current set", "", "", "", "", "", "", ""))
     val currentSet: LiveData<FlashcardsSet> = _currentSet
 
     // current set to modify
-    private val _currentCreateSet = MutableLiveData<FlashcardsSet>(FlashcardsSet("", "", "", "", "", "", ""))
+    private val _currentCreateSet = MutableLiveData<FlashcardsSet>(FlashcardsSet("", "", "", "", "", "", "", ""))
     val currentCreateSet: LiveData<FlashcardsSet> = _currentCreateSet
 
     // current set to study
-    private val _currentStudySet = MutableLiveData<FlashcardsSet>(FlashcardsSet("", "", "", "", "", "", ""))
+    private val _currentStudySet = MutableLiveData<FlashcardsSet>(FlashcardsSet("", "", "", "", "", "", "", ""))
     val currentStudySet: LiveData<FlashcardsSet> = _currentStudySet
 
     // current download set
-    private val _currentDownloadSet = MutableLiveData<FlashcardsSet>(FlashcardsSet("", "", "", "", "", "", ""))
+    private val _currentDownloadSet = MutableLiveData<FlashcardsSet>(FlashcardsSet("", "", "", "", "", "", "", ""))
     val currentDownloadSet: LiveData<FlashcardsSet> = _currentDownloadSet
 
     // current set to revise
-    private val _currentReviseSet = MutableLiveData<FlashcardsSet>(FlashcardsSet("", "", "", "", "", "", ""))
+    private val _currentReviseSet = MutableLiveData<FlashcardsSet>(FlashcardsSet("", "", "", "", "", "", "", ""))
     val currentReviseSet: LiveData<FlashcardsSet> = _currentReviseSet
 
     // set id needed for downloading
     private val _downloadSetID = MutableLiveData<String>("")
     val downloadSetID: LiveData<String> = _downloadSetID
-
-    // how many* flashcards added
-    private val _howMuchFlashcardsAdded = MutableLiveData<Int>(0)
-    val howMuchFlashcardsAdded: LiveData<Int> = _howMuchFlashcardsAdded
 
     // set option
     private val _option = MutableLiveData<String>("Study")
@@ -144,7 +140,8 @@ class AppViewModel: ViewModel() {
                         dataOfSet["words_count"].toString(),
                         dataOfSet["learned"].toString(),
                         dataOfSet["type"].toString(),
-                        dataOfSet["picture"].toString()
+                        dataOfSet["picture"].toString(),
+                        dataOfSet["next"].toString()
                     )
                     Log.d(TAG, "flashcardsSet: ${flashcardsSet}")
 
@@ -187,7 +184,8 @@ class AppViewModel: ViewModel() {
                         dataOfSet["words_count"].toString(),
                         dataOfSet["learned"].toString(),
                         dataOfSet["type"].toString(),
-                        dataOfSet["picture"].toString()
+                        dataOfSet["picture"].toString(),
+                        dataOfSet["next"].toString()
                     )
                     Log.d(TAG, "flashcardsSet: ${flashcardsSet}")
 
@@ -213,8 +211,8 @@ class AppViewModel: ViewModel() {
     fun getFlashcardsToStudy(){
 
         val list = mutableListOf<Flashcard>()
-        _currentStudySet.value = FlashcardsSet("", "", "", "", "", "", "")
-        _lastStudyFlashcard.value = Flashcard("", "", "", "", "")
+        _currentStudySet.value = FlashcardsSet("", "", "", "", "", "", "", "")
+        _lastStudyFlashcard.value = Flashcard("", "", "", "")
         _studiedWordsCount.value = 0
         _latestStudyFlashcardTime.value  = 0
         _studyFlashcards.value = mutableListOf()
@@ -232,16 +230,15 @@ class AppViewModel: ViewModel() {
                         flashcard.id,
                         dataOfFlashcard["term"].toString(),
                         dataOfFlashcard["definition"].toString(),
-                        dataOfFlashcard["learned"].toString(),
-                        dataOfFlashcard["created"].toString()
+                        dataOfFlashcard["learned"].toString()
                     )
                     Log.d(TAG, "flashcardsSet: ${flashcardObject}")
 
                     list.add(flashcardObject)
 
-                    if(flashcardObject.created.toLong() > latestStudyFlashcardTime.value!!){
-                        _latestStudyFlashcardTime.value = flashcardObject.created.toLong()
-                    }
+//                    if(flashcardObject.created.toLong() > latestStudyFlashcardTime.value!!){
+//                        _latestStudyFlashcardTime.value = flashcardObject.created.toLong()
+//                    }
                 }
 
                 Log.d(TAG, "Adding list of flashcards to study to ViewModel: $list")
@@ -267,7 +264,7 @@ class AppViewModel: ViewModel() {
     fun getFlashcardsToRevise(){
 
         val list = mutableListOf<Flashcard>()
-        _currentReviseSet.value = FlashcardsSet("", "", "", "", "", "", "")
+        _currentReviseSet.value = FlashcardsSet("", "", "", "", "", "", "", "")
         _reviseIndex.value = 0
         _latestReviseFlashcardTime.value  = 0
         _reviseFlashcards.value = mutableListOf()
@@ -285,8 +282,7 @@ class AppViewModel: ViewModel() {
                         flashcard.id,
                         dataOfFlashcard["term"].toString(),
                         dataOfFlashcard["definition"].toString(),
-                        dataOfFlashcard["learned"].toString(),
-                        dataOfFlashcard["created"].toString()
+                        dataOfFlashcard["learned"].toString()
                     )
 
                     Log.d(TAG, "flashcardsSet: ${flashcardObject}")
@@ -306,7 +302,7 @@ class AppViewModel: ViewModel() {
                 Log.d(TAG, "New currentReviseSet: ${currentStudySet.value}")
 
                 // setting "created" of latest flashcard to revise
-                _latestReviseFlashcardTime.value = list[list.size - 1].created.toLong()
+                //_latestReviseFlashcardTime.value = list[list.size - 1].created.toLong()
                 Log.d(TAG, "Latest revise time: ${latestReviseFlashcardTime.value!!}")
 
             }
@@ -320,33 +316,31 @@ class AppViewModel: ViewModel() {
     fun getFlashcardsToModify(){
 
         val list = mutableListOf<Flashcard>()
-        _currentCreateSet.value = FlashcardsSet("", "", "", "", "", "", "")
+        _currentCreateSet.value = FlashcardsSet("", "", "", "", "", "", "", "")
         _modifyFlashcards.value = mutableListOf()
-        _howMuchFlashcardsAdded.value = 0
 
-        firestoreDatabase.collection("Sets").document(currentSet.value!!.setID).collection("Flashcards")
-            .orderBy("created", Query.Direction.ASCENDING).get()
-            .addOnSuccessListener { querySnapshot ->
+        firestoreDatabase.collection("Sets").document(currentSet.value!!.setID)
+            .collection("Flashcards").document("FlashcardsDocument").get()
+            .addOnSuccessListener { documentSnapshot ->
 
-                Log.d(TAG, "Flashcards to modify retrieved: ${querySnapshot.documents}")
+                Log.d(TAG, "Flashcards to modify retrieved: ${documentSnapshot.data}")
 
-                for (flashcard in querySnapshot) {
+                for(index in 1..currentSet.value!!.wordsCount.toInt()){
 
-                    val dataOfFlashcard = flashcard.data
+                    val termString = "term${index}"
+                    val defString = "def${index}"
+                    val termLearnedString = "term${index}learned"
+
                     val flashcardObject = Flashcard(
-                        flashcard.id,
-                        dataOfFlashcard["term"].toString(),
-                        dataOfFlashcard["definition"].toString(),
-                        dataOfFlashcard["learned"].toString(),
-                        dataOfFlashcard["created"].toString()
+                        documentSnapshot.id,
+                        documentSnapshot.data?.get(termString).toString(),
+                        documentSnapshot.data?.get(defString).toString(),
+                        documentSnapshot.data?.get(termLearnedString).toString()
                     )
-                    Log.d(TAG, "Flashcard: ${flashcardObject}")
 
                     list.add(flashcardObject)
 
                 }
-
-                _currentCreateSet.value = FlashcardsSet("", "", "", "", "", "", "")
 
                 Log.d(TAG, "Adding list of flashcards to modify to ViewModel: $list")
                 _modifyFlashcards.value = list
@@ -355,11 +349,6 @@ class AppViewModel: ViewModel() {
                 Log.d(TAG, "Setting currentCreateSet to currentSet value: ${currentSet.value}")
                 _currentCreateSet.value = currentSet.value
                 Log.d(TAG, "New currentCreateSet: ${currentCreateSet.value}")
-
-                if(currentCreateSet.value == currentStudySet.value) {
-                    _currentStudySet.value = FlashcardsSet("", "", "", "", "", "", "")
-                }
-
 
             }
             .addOnFailureListener { e ->
@@ -388,8 +377,7 @@ class AppViewModel: ViewModel() {
                         documentSnapshot.id,
                         documentSnapshot.data?.get(termString).toString(),
                         documentSnapshot.data?.get(defString).toString(),
-                        "no",
-                        "0"
+                        "no"
                     )
 
                     list.add(flashcardObject)
@@ -410,7 +398,7 @@ class AppViewModel: ViewModel() {
     fun addSet(name: String){
 
         _modifyFlashcards.value = mutableListOf()
-        _currentCreateSet.value = FlashcardsSet("", "", "", "", "", "", "")
+        _currentCreateSet.value = FlashcardsSet("", "", "", "", "", "", "", "")
 
         // HashMap of the set
         val set = hashMapOf(
@@ -419,14 +407,15 @@ class AppViewModel: ViewModel() {
             "learned" to 0,
             "words_count" to 0,
             "type" to "user",
-            "picture" to "none"
+            "picture" to "none",
+            "next" to 1
         )
 
         firestoreDatabase.collection("Sets")
             .add(set)
             .addOnSuccessListener { documentReference ->
 
-                _currentCreateSet.value = FlashcardsSet(documentReference.id, name, auth.currentUser!!.uid, "0", "0", "user", "none")
+                _currentCreateSet.value = FlashcardsSet(documentReference.id, name, auth.currentUser!!.uid, "0", "0", "user", "none", "1")
                 Log.d(TAG, "Set added to Firestore with ID: ${documentReference.id}")
                 Log.d(TAG, "New currentCreateSet: ${currentCreateSet.value}")
 
@@ -437,6 +426,40 @@ class AppViewModel: ViewModel() {
 
             }
 
+    }
+
+    /** Add one flashcard to Firestore */
+    fun addFlashcard(term: String, definition: String){
+
+        //val currentTimeInt = System.currentTimeMillis()
+
+        val flashcard = hashMapOf(
+            "term${currentCreateSet.value!!.next.toInt()}" to term,
+            "def${currentCreateSet.value!!.next.toInt()}" to definition,
+            "term${currentCreateSet.value!!.next.toInt()}learned" to "no",
+        )
+
+        firestoreDatabase.collection("Sets").document(currentCreateSet.value!!.setID)
+            .collection("Flashcards").document("FlashcardsDocument").set(flashcard, SetOptions.merge())
+            .addOnSuccessListener {
+
+                var listToUpdate = _modifyFlashcards.value
+                if(listToUpdate.isNullOrEmpty()) {
+                    listToUpdate = mutableListOf(Flashcard(currentCreateSet.value!!.next, term, definition, "no"))
+                } else {
+                    listToUpdate.add(Flashcard(currentCreateSet.value!!.next, term, definition, "no"))
+                }
+
+                if(!listToUpdate.isNullOrEmpty())  { _modifyFlashcards.value = listToUpdate!! }
+
+                updateSetWordsCount()
+
+                Log.d(TAG, "Flashcard added to document with id: \"FlashcardsDocument\"")
+                Log.d(TAG, "Current flashcards to modify: ${modifyFlashcards.value}")
+            }
+            .addOnFailureListener { e ->
+                Log.e(TAG, "Adding flashcard in the Firestore went wrong due to: ${e.message}")
+            }
     }
 
     /** Add one download set to Firestore */
@@ -510,53 +533,19 @@ class AppViewModel: ViewModel() {
 
     }
 
-    /** Add one flashcard to Firestore */
-    fun addFlashcard(term: String, definition: String){
-
-        val currentTimeInt = System.currentTimeMillis()
-
-        // HashMap of the flashcard
-        val flashcard = hashMapOf(
-            "term" to term,
-            "definition" to definition,
-            "learned" to "no",
-            "created" to currentTimeInt
-        )
-
-        firestoreDatabase.collection("Sets").document(currentCreateSet.value!!.setID).collection("Flashcards")
-            .add(flashcard)
-            .addOnSuccessListener { documentReference ->
-
-                var listToUpdate = _modifyFlashcards.value
-                if(listToUpdate.isNullOrEmpty()) {
-                    listToUpdate = mutableListOf(Flashcard(documentReference.id, term, definition, "no", currentTimeInt.toString()))
-                } else {
-                    listToUpdate.add(Flashcard(documentReference.id, term, definition, "no", currentTimeInt.toString()))
-                }
-
-                if(!listToUpdate.isNullOrEmpty())  { _modifyFlashcards.value = listToUpdate!! }
-
-                _howMuchFlashcardsAdded.value = howMuchFlashcardsAdded.value!! + 1
-
-                Log.d(TAG, "Flashcard added with ID: ${documentReference.id}")
-                Log.d(TAG, "Current flashcards to modify: ${modifyFlashcards.value}")
-
-            }
-            .addOnFailureListener { e ->
-
-                Log.e(TAG, "Creation of the flashcard in the Firestore went wrong due to: ${e.message}")
-
-            }
-    }
-
     /** update "words_count" of the modified set */
     fun updateSetWordsCount(){
 
         val hashMapToUpdate = hashMapOf(
-            "words_count" to currentCreateSet.value!!.wordsCount.toInt() + howMuchFlashcardsAdded.value!!
+            "words_count" to currentCreateSet.value!!.wordsCount.toInt() + 1,
+            "next" to currentCreateSet.value!!.next.toInt() + 1
         )
 
         firestoreDatabase.collection("Sets").document(currentCreateSet.value!!.setID).set(hashMapToUpdate, SetOptions.merge())
+            .addOnSuccessListener {
+                _currentCreateSet.value!!.wordsCount = (currentCreateSet.value!!.wordsCount.toInt() + 1).toString()
+                _currentCreateSet.value!!.next = (currentCreateSet.value!!.next.toInt() + 1).toString()
+            }
 
     }
 
@@ -586,7 +575,7 @@ class AppViewModel: ViewModel() {
         // flashcard to be changed to learned
         Log.d(TAG, "Updating flashcard with with index ${properIndex} to learned")
         val flashcard = studyFlashcards.value!![properIndex]
-        val updatedFlashcard = Flashcard(flashcard.flashcardId, flashcard.term, flashcard.definition, "yes", flashcard.created)
+        val updatedFlashcard = Flashcard(flashcard.flashcardId, flashcard.term, flashcard.definition, "yes")
 
         // update viewModel
         val list = studyFlashcards.value!!
@@ -633,16 +622,15 @@ class AppViewModel: ViewModel() {
                             flashcard.id,
                             dataOfFlashcard["term"].toString(),
                             dataOfFlashcard["definition"].toString(),
-                            dataOfFlashcard["learned"].toString(),
-                            dataOfFlashcard["created"].toString()
+                            dataOfFlashcard["learned"].toString()
                         )
                         Log.d(TAG, "Flashcard: ${flashcardObject}")
 
                         list.add(flashcardObject)
 
-                        if(flashcardObject.created.toLong() > latestStudyFlashcardTime.value!!){
-                            _latestStudyFlashcardTime.value = flashcardObject.created.toLong()
-                        }
+//                        if(flashcardObject.created.toLong() > latestStudyFlashcardTime.value!!){
+//                            _latestStudyFlashcardTime.value = flashcardObject.created.toLong()
+//                        }
 
                     }
 
@@ -695,8 +683,7 @@ class AppViewModel: ViewModel() {
                             flashcard.id,
                             dataOfFlashcard["term"].toString(),
                             dataOfFlashcard["definition"].toString(),
-                            dataOfFlashcard["learned"].toString(),
-                            dataOfFlashcard["created"].toString()
+                            dataOfFlashcard["learned"].toString()
                         )
                         Log.d(TAG, "Flashcard: ${flashcardObject}")
 
@@ -705,7 +692,7 @@ class AppViewModel: ViewModel() {
                     }
 
                     // setting "created" of latest flashcard to revise
-                    _latestReviseFlashcardTime.value = list[list.size - 1].created.toLong()
+                    // _latestReviseFlashcardTime.value = list[list.size - 1].created.toLong()
                     Log.d(TAG, "Latest revise time: ${latestReviseFlashcardTime.value!!}")
 
                     Log.d(TAG, "Adding list of flashcards to revise to ViewModel: $list")
@@ -788,6 +775,12 @@ class AppViewModel: ViewModel() {
     /** reset downloadComplete variable */
     fun resetDownloadComplete(){
         _downloadComplete.value = false
+    }
+
+    /** reset modification variables */
+    fun resetModifyVariables(){
+        _currentCreateSet.value = FlashcardsSet("", "", "", "", "", "", "", "")
+        _modifyFlashcards.value = mutableListOf()
     }
 
     /** all flashcards to study are learned */

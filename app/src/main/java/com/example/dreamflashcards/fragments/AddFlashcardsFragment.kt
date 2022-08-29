@@ -49,17 +49,7 @@ class AddFlashcardsFragment : Fragment() {
         recyclerView = binding.flashcardsRecyclerview
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
-        val adapter = FlashcardsCreateAdapter{ flashcard, option ->
-
-            if (option == "delete") {
-
-                Log.d(TAG, "Delete button clicked")
-
-            } else if (option == "modify") {
-
-                Log.d(TAG, "Modify button clicked")
-
-            }
+        val adapter = FlashcardsCreateAdapter{ flashcard ->
 
         }
 
@@ -92,10 +82,12 @@ class AddFlashcardsFragment : Fragment() {
     }
 
     override fun onDestroy() {
+
         super.onDestroy()
         _binding = null
 
-        appViewModel.updateSetWordsCount()
+        // reset modification modifications in AppViewModel
+        appViewModel.resetModifyVariables()
 
     }
 

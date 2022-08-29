@@ -47,6 +47,7 @@ class SetOptionFragment : Fragment() {
 
         binding.setName.text = appViewModel.currentSet.value!!.name
 
+        // configure AlertDialog
         alertDialogBuilder = AlertDialog.Builder(requireContext())
         alertDialogBuilder.setTitle("Delete set")
         alertDialogBuilder.setMessage("Are you sure you want to delete this set?")
