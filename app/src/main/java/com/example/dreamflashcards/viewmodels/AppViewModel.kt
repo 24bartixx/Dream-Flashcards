@@ -11,7 +11,6 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.functions.ktx.functions
 import com.google.firebase.ktx.Firebase
 
 class AppViewModel: ViewModel() {
@@ -92,6 +91,10 @@ class AppViewModel: ViewModel() {
     // indicates whether the set is learned or not
     private val _studySetStudied = MutableLiveData<Boolean>(false)
     val studySetStudied: LiveData<Boolean> = _studySetStudied
+
+    // indicates whether set is deleted
+    private val _setDeleted = MutableLiveData<Boolean>(false)
+    val setDeleted: LiveData<Boolean> = _setDeleted
 
     // indicates whether the download set was added to Firestore
     private val _downloadSetAddedToFirestore = MutableLiveData<Boolean>(false)
@@ -517,19 +520,28 @@ class AppViewModel: ViewModel() {
 
     }
 
-    /** Delete set from Firestore */
-    fun deleteSet(){
+    /** Delete flashcards document from Firestore */
+    fun deleteFlashcardsDocument(){
 
-        val path = "/Sets/" + currentSet.value!!.setID + "/Flashcards"
-
-        val deleteFn = Firebase.functions.getHttpsCallable("deleteFlashcards")
-        deleteFn.call(hashMapOf("path" to path))
+        firestoreDatabase.collection("Sets").document(currentSet.value!!.setID)
+            .collection("Flashcards").document("FlashDocument").delete()
             .addOnSuccessListener {
-                Log.d(TAG, "Deleting the set")
+                Log.d(TAG, "Flashcards document successfully deleted!")
+                deleteSet()
             }
-            .addOnFailureListener { e ->
-                Log.e(TAG, "Failed to delete the set due to: ${e.message}")
+            .addOnFailureListener { e -> Log.w(TAG, "Error deleting flashcards document due to: ${e.message}") }
+
+    }
+
+    /** Delete set from Firestore */
+    private fun deleteSet(){
+
+        firestoreDatabase.collection("Sets").document(currentSet.value!!.setID).delete()
+            .addOnSuccessListener {
+                _setDeleted.value = true
+                Log.d(TAG, "Set document successfully deleted!")
             }
+            .addOnFailureListener { e -> Log.w(TAG, "Error deleting set document due to: ${e.message}") }
 
     }
 
@@ -770,6 +782,11 @@ class AppViewModel: ViewModel() {
     fun resetReviseIndex(){
         _reviseIndex.value = 0
         Log.d(TAG, "Revise index reset to 0")
+    }
+
+    /** reset setDeleted variable */
+    fun resetSetDeleted(){
+        _setDeleted.value = false
     }
 
     /** reset downloadComplete variable */

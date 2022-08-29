@@ -53,7 +53,13 @@ class SetOptionFragment : Fragment() {
         alertDialogBuilder.setMessage("Are you sure you want to delete this set?")
         alertDialogBuilder.setPositiveButton("yes") { dialog, which ->
             Toast.makeText(requireContext(), "Set deleted...", Toast.LENGTH_SHORT).show()
-            //appViewModel.deleteSet()
+            appViewModel.deleteFlashcardsDocument()
+            appViewModel.setDeleted.observe(this.viewLifecycleOwner) {
+                if(appViewModel.setDeleted.value!!) {
+                    appViewModel.resetSetDeleted()
+                    findNavController().popBackStack()
+                }
+            }
         }
         alertDialogBuilder.setNegativeButton("no") { dialog, which -> }
 

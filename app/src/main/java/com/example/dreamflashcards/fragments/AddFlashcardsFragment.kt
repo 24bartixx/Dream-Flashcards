@@ -1,5 +1,6 @@
 package com.example.dreamflashcards.fragments
 
+import android.app.ProgressDialog
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -26,6 +27,9 @@ class AddFlashcardsFragment : Fragment() {
     // AppViewModel
     private val appViewModel: AppViewModel by activityViewModels()
 
+    // Progress Dialog
+    private lateinit var progressDialog: ProgressDialog
+
     private val args: AddFlashcardsFragmentArgs by navArgs()
 
     companion object {
@@ -45,6 +49,12 @@ class AddFlashcardsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // configure ProgressDialog
+        progressDialog = ProgressDialog(requireContext())
+        progressDialog.setTitle("Retrieving flashcards")
+        progressDialog.setMessage("Please wait...")
+        progressDialog.setCanceledOnTouchOutside(false)
+
         /** RecyclerView setup */
         recyclerView = binding.flashcardsRecyclerview
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
@@ -59,6 +69,8 @@ class AddFlashcardsFragment : Fragment() {
             modifyFlashcardsList.let {
                 if (!appViewModel.modifyFlashcards.value.isNullOrEmpty()) {
 
+                    progressDialog.dismiss()
+
                     Log.d(TAG, "Flashcards list: ${appViewModel.modifyFlashcards.value}")
                     adapter.submitList(appViewModel.modifyFlashcards.value)
                     binding.addFlashcardsInfo.visibility = View.INVISIBLE
@@ -68,6 +80,14 @@ class AddFlashcardsFragment : Fragment() {
                     Log.d(TAG, "Flashcards list empty")
                     binding.addFlashcardsInfo.visibility = View.VISIBLE
 
+                } else if(appViewModel.currentSet.value!!.wordsCount == "0") {
+
+                    progressDialog.dismiss()
+                    binding.addFlashcardsInfo.visibility = View.VISIBLE
+
+                } else if(args.fromWhere == "SetOptionFragment") {
+                    binding.addFlashcardsInfo.visibility = View.INVISIBLE
+                    progressDialog.show()
                 }
             }
         }
