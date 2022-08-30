@@ -38,22 +38,24 @@ class ReviseFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // configure progressDialog
+        /** configure ProgressDialog */
         progressDialog = ProgressDialog(requireContext())
         progressDialog.setTitle("Please wait...")
         progressDialog.setMessage("Preparing flashcards")
         progressDialog.setCanceledOnTouchOutside(false)
 
-        // buttons listeners
+        /** show definition button listener */
         binding.showDefinitionButton.setOnClickListener{
             showDefinition()
         }
 
+        /** next flashcard button listener */
         binding.nextFlashcardButton.setOnClickListener {
             appViewModel.incrementReviseIndex()
             showTermAndButton()
         }
 
+        /** observe revise flashcards in the ViewModel */
         appViewModel.reviseFlashcards.observe(this.viewLifecycleOwner) { reviseFlashcards ->
 
             if(appViewModel.reviseFlashcards.value.isNullOrEmpty()){
@@ -79,17 +81,16 @@ class ReviseFragment : Fragment() {
     }
 
     private fun showTermAndButton() {
-        binding.apply {
 
-            if(appViewModel.reviseIndex.value == appViewModel.reviseFlashcards.value!!.size) {
-                progressDialog.show()
-                appViewModel.getMoreReviseFlashcards()
-            } else {
+        if(appViewModel.reviseIndex.value == appViewModel.reviseFlashcards.value!!.size){
+            progressDialog.show()
+            appViewModel.resetReviseIndex()
+        } else {
 
-                Log.d(TAG, "Term at index: ${appViewModel.reviseIndex.value!!}")
+            Log.d(TAG, "Term at index: ${appViewModel.reviseIndex.value!!}")
+            progressDialog.dismiss()
 
-                progressDialog.dismiss()
-
+            binding.apply {
                 termCard.visibility = View.VISIBLE
                 definitionCard.visibility = View.INVISIBLE
                 showDefinitionButton.visibility = View.VISIBLE
@@ -97,9 +98,7 @@ class ReviseFragment : Fragment() {
 
                 term.text = appViewModel.reviseFlashcards.value!![appViewModel.reviseIndex.value!!].term
                 definition.text = appViewModel.reviseFlashcards.value!![appViewModel.reviseIndex.value!!].definition
-
             }
-
         }
     }
 

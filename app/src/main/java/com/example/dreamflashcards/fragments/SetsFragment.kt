@@ -52,21 +52,34 @@ class SetsFragment : Fragment() {
 
         val adapter = SetsAdapter{ flashcardSet ->
 
-            try {
+            if(flashcardSet != appViewModel.currentSet.value){
+                try {
 
-                appViewModel.setCurrentSet(flashcardSet)
+                    // set currentSet and retrieve flashcards from Firebase
+                    appViewModel.setCurrentSet(flashcardSet)
 
-                Log.i(TAG, "Current set id: ${appViewModel.getCurrentSet().setID}")
+                    Log.i(TAG, "Current set id: ${appViewModel.getCurrentSet().setID}")
+
+                    // got to the next screen
+                    Log.d(TAG, "Moving to the next screen")
+                    val action = SetsFragmentDirections.actionSetsFragmentToSetOptionFragment()
+                    findNavController().navigate(action)
+
+                } catch(e: Exception) {
+                    Log.e(TAG, "Cannot set current set in viewModel due to: ${e.message}")
+                    Toast.makeText(requireContext(), "Something went wrong...", Toast.LENGTH_SHORT).show()
+                }
+            } else {
+
+                Log.d(TAG, "Proper currentSet already set!")
 
                 // got to the next screen
                 Log.d(TAG, "Moving to the next screen")
                 val action = SetsFragmentDirections.actionSetsFragmentToSetOptionFragment()
                 findNavController().navigate(action)
 
-            } catch(e: Exception) {
-                Log.e(TAG, "Cannot set current set in viewModel due to: ${e.message}")
-                Toast.makeText(requireContext(), "Something went wrong...", Toast.LENGTH_SHORT).show()
             }
+
         }
 
         recyclerView.adapter = adapter

@@ -84,7 +84,7 @@ class CreateFlashcardFragment : Fragment() {
                 Toast.makeText(requireContext(), "New flashcard created", Toast.LENGTH_SHORT).show()
 
             } catch (e: Exception) {
-                Log.d(TAG, "Error adding an flashcard dur to: ${e.message}")
+                Log.e(TAG, "Error adding an flashcard due to: ${e.message}")
                 Toast.makeText(requireContext(), "Something went wrong...", Toast.LENGTH_SHORT).show()
             }
         }

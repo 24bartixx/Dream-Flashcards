@@ -1,6 +1,7 @@
 package com.example.dreamflashcards.fragments
 
 import android.app.AlertDialog
+import android.app.ProgressDialog
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -18,6 +19,8 @@ class SetOptionFragment : Fragment() {
     // view binding
     private var _binding: FragmentSetOptionBinding? = null
     private val binding get() = _binding!!
+
+    private lateinit var progressDialog: ProgressDialog
 
     // AppViewModel
     private val appViewModel: AppViewModel by activityViewModels()
@@ -62,8 +65,28 @@ class SetOptionFragment : Fragment() {
             }
         }
         alertDialogBuilder.setNegativeButton("no") { dialog, which -> }
-
         alertDialog = alertDialogBuilder.create()
+
+        // configure ProgressDialog
+        progressDialog = ProgressDialog(requireContext())
+        progressDialog.setTitle("Preparing flashcards")
+        progressDialog.setMessage("Please wait...")
+        progressDialog.setCanceledOnTouchOutside(false)
+
+        // flashcards observer
+        if(appViewModel.currentSet.value!!.wordsCount.toInt() > 0){
+            appViewModel.flashcards.observe(this.viewLifecycleOwner) {
+
+                if(appViewModel.flashcards.value.isNullOrEmpty()){
+                    hideEverything()
+                    progressDialog.show()
+                } else {
+                    progressDialog.dismiss()
+                    showEverything()
+                }
+
+            }
+        }
 
     }
 
@@ -98,18 +121,32 @@ class SetOptionFragment : Fragment() {
     /** data binding function on revise button clicked */
     fun reviseFlashcards(){
 
+        if(appViewModel.currentSet.value!!.wordsCount.toInt() > 0) {
+
+        } else {
+
+        }
+
         if(appViewModel.currentSet.value != appViewModel.currentReviseSet.value){
-            try {
+            if(appViewModel.currentReviseSet.value!!.wordsCount != "0") {
+                try {
 
-                Log.d(TAG, "Retrieving flashcards to revise from Firestore")
-                appViewModel.getFlashcardsToRevise()
+                    Log.d(TAG, "Retrieving flashcards to revise from Firestore")
+                    appViewModel.getFlashcardsToRevise()
 
-                val action = SetOptionFragmentDirections.actionSetOptionFragmentToReviseFragment()
-                findNavController().navigate(action)
+                    val action = SetOptionFragmentDirections.actionSetOptionFragmentToReviseFragment()
+                    findNavController().navigate(action)
 
-            } catch(e: Exception) {
-                Log.e(TAG, "Cannot retrieve flashcards to revise from Firestore due to: ${e.message}")
-                Toast.makeText(requireContext(), "Something went wrong...", Toast.LENGTH_SHORT).show()
+                } catch (e: Exception) {
+                    Log.e(
+                        TAG,
+                        "Cannot retrieve flashcards to revise from Firestore due to: ${e.message}"
+                    )
+                    Toast.makeText(requireContext(), "Something went wrong...", Toast.LENGTH_SHORT).show()
+                }
+            } else {
+                Log.d(TAG, "No flashcards to retrieve")
+                Toast.makeText(requireContext(), "No flashcards to revise...", Toast.LENGTH_SHORT).show()
             }
         } else {
             Log.d(TAG, "Flashcards to revise already set")
@@ -122,24 +159,8 @@ class SetOptionFragment : Fragment() {
     /** data binding function on modify button clicked */
     fun modifyFlashcards(){
 
-        if(appViewModel.currentCreateSet.value != appViewModel.currentSet.value){
-            try {
-
-                Log.d(TAG, "Retrieving flashcards to modify from Firestore")
-                appViewModel.getFlashcardsToModify()
-
-                val action = SetOptionFragmentDirections.actionSetOptionFragmentToAddFlashcardsFragment("SetOptionFragment")
-                findNavController().navigate(action)
-
-            } catch(e: Exception) {
-                Log.e(TAG, "Cannot retrieve flashcards to modify from Firestore due to: ${e.message}")
-                Toast.makeText(requireContext(), "Something went wrong...", Toast.LENGTH_SHORT).show()
-            }
-        } else {
-            Log.d(TAG, "Flashcards to modify already set")
-            val action = SetOptionFragmentDirections.actionSetOptionFragmentToAddFlashcardsFragment("SetOptionFragment")
-            findNavController().navigate(action)
-        }
+        val action = SetOptionFragmentDirections.actionSetOptionFragmentToAddFlashcardsFragment("SetOptionFragment")
+        findNavController().navigate(action)
 
     }
 
@@ -203,33 +224,34 @@ class SetOptionFragment : Fragment() {
                 }
             }
 
-            "Modify" -> {
-
-                if(appViewModel.currentCreateSet.value != appViewModel.currentSet.value){
-                    try {
-
-                        Log.d(TAG, "Retrieving flashcards to modify from Firestore")
-                        appViewModel.getFlashcardsToModify()
-
-                        val action = SetOptionFragmentDirections.actionSetOptionFragmentToAddFlashcardsFragment("SetOptionFragment")
-                        findNavController().navigate(action)
-
-                    } catch(e: Exception) {
-                        Log.e(TAG, "Cannot retrieve flashcards to modify from Firestore due to: ${e.message}")
-                        Toast.makeText(requireContext(), "Something went wrong...", Toast.LENGTH_SHORT).show()
-                    }
-                } else {
-                    Log.d(TAG, "Flashcards to modify already set")
-                    val action = SetOptionFragmentDirections.actionSetOptionFragmentToAddFlashcardsFragment("SetOptionFragment")
-                    findNavController().navigate(action)
-                }
-
-            }
-
         }
 
 
 
+    }
+
+    /** hide everything on the screen */
+    private fun hideEverything() {
+        binding.apply {
+            setName.visibility = View.INVISIBLE
+            chooseOptionHelperText.visibility = View.INVISIBLE
+            studyButton.visibility = View.INVISIBLE
+            reviseButton.visibility = View.INVISIBLE
+            modifyButton.visibility = View.INVISIBLE
+            deleteButton.visibility = View.INVISIBLE
+        }
+    }
+
+    /** show everything on the screen */
+    private fun showEverything() {
+        binding.apply {
+            setName.visibility = View.VISIBLE
+            chooseOptionHelperText.visibility = View.VISIBLE
+            studyButton.visibility = View.VISIBLE
+            reviseButton.visibility = View.VISIBLE
+            modifyButton.visibility = View.VISIBLE
+            deleteButton.visibility = View.VISIBLE
+        }
     }
 
     override fun onDestroy() {
