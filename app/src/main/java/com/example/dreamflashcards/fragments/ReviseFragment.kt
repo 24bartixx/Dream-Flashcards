@@ -1,6 +1,5 @@
 package com.example.dreamflashcards.fragments
 
-import android.app.ProgressDialog
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -17,9 +16,6 @@ class ReviseFragment : Fragment() {
     private val binding get() = _binding!!
 
     private val appViewModel: AppViewModel by activityViewModels()
-
-    // Progress Dialog
-    private lateinit var progressDialog: ProgressDialog
 
     companion object {
         private const val TAG = "ReviseFragment"
@@ -38,12 +34,6 @@ class ReviseFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        /** configure ProgressDialog */
-        progressDialog = ProgressDialog(requireContext())
-        progressDialog.setTitle("Please wait...")
-        progressDialog.setMessage("Preparing flashcards")
-        progressDialog.setCanceledOnTouchOutside(false)
-
         /** show definition button listener */
         binding.showDefinitionButton.setOnClickListener{
             showDefinition()
@@ -55,51 +45,30 @@ class ReviseFragment : Fragment() {
             showTermAndButton()
         }
 
-        /** observe revise flashcards in the ViewModel */
-        appViewModel.reviseFlashcards.observe(this.viewLifecycleOwner) { reviseFlashcards ->
+        /** start revise cycle */
+        appViewModel.resetReviseIndex()
+        showTermAndButton()
 
-            if(appViewModel.reviseFlashcards.value.isNullOrEmpty()){
-                Log.d(TAG, "Revise flashcards is empty")
-                hideEverything()
-                progressDialog.show()
-            } else {
-                Log.d(TAG, "Revise flashcards list changed")
-                showTermAndButton()
-            }
-
-        }
-
-    }
-
-    private fun hideEverything(){
-        binding.apply {
-            termCard.visibility = View.INVISIBLE
-            definitionCard.visibility = View.INVISIBLE
-            showDefinitionButton.visibility = View.INVISIBLE
-            nextFlashcardButton.visibility = View.INVISIBLE
-        }
     }
 
     private fun showTermAndButton() {
 
-        if(appViewModel.reviseIndex.value == appViewModel.reviseFlashcards.value!!.size){
-            progressDialog.show()
+        if(appViewModel.reviseIndex.value == appViewModel.flashcards.value!!.size){
             appViewModel.resetReviseIndex()
-        } else {
-
-            Log.d(TAG, "Term at index: ${appViewModel.reviseIndex.value!!}")
-            progressDialog.dismiss()
-
-            binding.apply {
-                termCard.visibility = View.VISIBLE
-                definitionCard.visibility = View.INVISIBLE
-                showDefinitionButton.visibility = View.VISIBLE
-                nextFlashcardButton.visibility = View.INVISIBLE
-
-                term.text = appViewModel.reviseFlashcards.value!![appViewModel.reviseIndex.value!!].term
-                definition.text = appViewModel.reviseFlashcards.value!![appViewModel.reviseIndex.value!!].definition
-            }
         }
+
+        Log.d(TAG, "Term at index: ${appViewModel.reviseIndex.value!!}")
+
+        binding.apply {
+            termCard.visibility = View.VISIBLE
+            definitionCard.visibility = View.INVISIBLE
+            showDefinitionButton.visibility = View.VISIBLE
+            nextFlashcardButton.visibility = View.INVISIBLE
+
+            term.text = appViewModel.flashcards.value!![appViewModel.reviseIndex.value!!].term
+            definition.text = appViewModel.flashcards.value!![appViewModel.reviseIndex.value!!].definition
+        }
+
     }
 
     private fun showDefinition(){

@@ -8,7 +8,6 @@ import com.example.dreamflashcards.models.Flashcard
 import com.example.dreamflashcards.models.FlashcardsSet
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -37,25 +36,9 @@ class AppViewModel: ViewModel() {
     private val _currentDownloadSet = MutableLiveData<FlashcardsSet>(FlashcardsSet("", "", "", "", "", "", "", ""))
     val currentDownloadSet: LiveData<FlashcardsSet> = _currentDownloadSet
 
-    // current set to revise
-    private val _currentReviseSet = MutableLiveData<FlashcardsSet>(FlashcardsSet("", "", "", "", "", "", "", ""))
-    val currentReviseSet: LiveData<FlashcardsSet> = _currentReviseSet
-
     // set id needed for downloading
     private val _downloadSetID = MutableLiveData<String>("")
     val downloadSetID: LiveData<String> = _downloadSetID
-
-    // set option
-    private val _option = MutableLiveData<String>("Study")
-    val option: LiveData<String> = _option
-
-    // how many words passed while studying
-    private val _studiedWordsCount = MutableLiveData<Int>()
-    val studiedWordsCount: LiveData<Int> = _studiedWordsCount
-
-    // how many words passed while revising -> index
-    private val _reviseIndex = MutableLiveData<Int>()
-    val reviseIndex: LiveData<Int> = _reviseIndex
 
     // Flashcards
     private val _flashcards = MutableLiveData<MutableList<Flashcard>>()
@@ -65,25 +48,26 @@ class AppViewModel: ViewModel() {
     private val _studyFlashcards = MutableLiveData<MutableList<Flashcard>>()
     val studyFlashcards: LiveData<MutableList<Flashcard>> = _studyFlashcards
 
-    // Flashcards to revise
-    private val _reviseFlashcards = MutableLiveData<MutableList<Flashcard>>()
-    val reviseFlashcards: LiveData<MutableList<Flashcard>> = _reviseFlashcards
+    // how many words passed while studying
+    private val _studiedWordsCount = MutableLiveData<Int>()
+    val studiedWordsCount: LiveData<Int> = _studiedWordsCount
 
-    // Flashcards to modify
-    private val _modifyFlashcards = MutableLiveData<MutableList<Flashcard>>()
-    val modifyFlashcards: LiveData<MutableList<Flashcard>> = _modifyFlashcards
+    // how many words passed while revising -> index
+    private val _reviseIndex = MutableLiveData<Int>()
+    val reviseIndex: LiveData<Int> = _reviseIndex
+
+    // how many words passed while studying -> index
+    private val _studyIndex = MutableLiveData<Int>()
+    val studyIndex: LiveData<Int> = _studyIndex
+
+    /** DO NOT DELETE */
+    // how many words are there to be learned
+    private val _studyUnlearnedNumber = MutableLiveData<Int>()
+    val studyUnlearnedNumber: LiveData<Int> = _studyUnlearnedNumber
 
     // Flashcards to download
     private val _downloadFlashcards = MutableLiveData<MutableList<Flashcard>>()
     val downloadFlashcards: LiveData<MutableList<Flashcard>> = _downloadFlashcards
-
-    // flashcards to study -> latest flashcard -> time of creation
-    private val _latestStudyFlashcardTime = MutableLiveData<Long>(0)
-    val latestStudyFlashcardTime: LiveData<Long> = _latestStudyFlashcardTime
-
-
-    private val _latestReviseFlashcardTime = MutableLiveData<Long>(0)
-    val latestReviseFlashcardTime: LiveData<Long> = _latestReviseFlashcardTime
 
     // last flashcard to study used in shuffle method
     private val _lastStudyFlashcard = MutableLiveData<Flashcard>()
@@ -93,6 +77,9 @@ class AppViewModel: ViewModel() {
     private val _studySetStudied = MutableLiveData<Boolean>(false)
     val studySetStudied: LiveData<Boolean> = _studySetStudied
 
+    private val _studyShuffled = MutableLiveData<Boolean>(false)
+    val studyShuffled: LiveData<Boolean> = _studyShuffled
+
     // indicates whether set is deleted
     private val _setDeleted = MutableLiveData<Boolean>(false)
     val setDeleted: LiveData<Boolean> = _setDeleted
@@ -101,7 +88,7 @@ class AppViewModel: ViewModel() {
     private val _downloadSetAddedToFirestore = MutableLiveData<Boolean>(false)
     val downloadSetAddedToFirestore: LiveData<Boolean> = _downloadSetAddedToFirestore
 
-    // indicated whether the download is completed
+    // indicates whether the download is completed
     private val _downloadComplete = MutableLiveData<Boolean>(false)
     val downloadComplete: LiveData<Boolean> = _downloadComplete
 
@@ -114,7 +101,6 @@ class AppViewModel: ViewModel() {
     companion object {
         private const val TAG = "AppViewModel"
         const val MAX_STUDY = 3
-        const val MAX_REVISE = 4
     }
 
     init {
@@ -215,6 +201,7 @@ class AppViewModel: ViewModel() {
     private fun getFlashcards() {
 
         val list = mutableListOf<Flashcard>()
+        val listToStudy = mutableListOf<Flashcard>()
 
         firestoreDatabase.collection("Sets").document(currentSet.value!!.setID)
             .collection("Flashcards").document("FlashcardsDocument").get()
@@ -235,8 +222,6 @@ class AppViewModel: ViewModel() {
                         documentSnapshot.data?.get(termLearnedString).toString()
                     )
 
-                    // Log.d(TAG, "Flashcard: ${flashcardObject}")
-
                     if(flashcardObject.term != "null" && flashcardObject.definition != "null" && flashcardObject.learned != "null") {
                         list.add(flashcardObject)
                     }
@@ -247,107 +232,18 @@ class AppViewModel: ViewModel() {
                 _flashcards.value = list
                 Log.d(TAG, "Current list of flashcards: ${flashcards.value}")
 
+                for (flashcard in flashcards.value!!){
+                    if(flashcard.learned == "no"){
+                        listToStudy.add(flashcard)
+                    }
+                }
+                _studyFlashcards.value = listToStudy
+
+                shuffleStudyFlashcards()
+
             }
             .addOnFailureListener { e ->
                 Log.e(TAG, "Could not retrieve flashcards from Firestore due to: ${e.message}")
-            }
-
-    }
-
-    /** Get current set's flashcards to study from Firestore function */
-    fun getFlashcardsToStudy(){
-
-        val list = mutableListOf<Flashcard>()
-        _currentStudySet.value = FlashcardsSet("", "", "", "", "", "", "", "")
-        _lastStudyFlashcard.value = Flashcard("", "", "", "")
-        _studiedWordsCount.value = 0
-        _latestStudyFlashcardTime.value  = 0
-        _studyFlashcards.value = mutableListOf()
-
-        firestoreDatabase.collection("Sets").document(currentSet.value!!.setID).collection("Flashcards")
-            .whereEqualTo("learned", "no").orderBy("created", Query.Direction.ASCENDING).limit(MAX_STUDY.toLong()).get()
-            .addOnSuccessListener{ querySnapshot ->
-
-                Log.d(TAG, "Flashcards to study retrieved: ${querySnapshot.documents}")
-
-                for(flashcard in querySnapshot){
-
-                    val dataOfFlashcard = flashcard.data
-                    val flashcardObject = Flashcard(
-                        flashcard.id,
-                        dataOfFlashcard["term"].toString(),
-                        dataOfFlashcard["definition"].toString(),
-                        dataOfFlashcard["learned"].toString()
-                    )
-                    Log.d(TAG, "flashcardsSet: ${flashcardObject}")
-
-                    list.add(flashcardObject)
-
-//                    if(flashcardObject.created.toLong() > latestStudyFlashcardTime.value!!){
-//                        _latestStudyFlashcardTime.value = flashcardObject.created.toLong()
-//                    }
-                }
-
-                Log.d(TAG, "Adding list of flashcards to study to ViewModel: $list")
-                _studyFlashcards.value = list
-                Log.d(TAG, "Current list of flashcards to study: ${studyFlashcards.value}")
-
-                Log.d(TAG, "Size of current list of flashcards to study: ${studyFlashcards.value!!.size}")
-
-                Log.d(TAG, "Setting currentStudySet to currentSet value: ${currentSet.value}")
-                _currentStudySet.value = currentSet.value
-                Log.d(TAG, "New currentStudySet: ${currentStudySet.value}")
-
-                shuffleFlashcards()
-
-            }
-            .addOnFailureListener{ e ->
-                Log.e(TAG, "Could not retrieve flashcards to study from Firestore due to: ${e.message}")
-            }
-
-    }
-
-    /** Get current set's flashcards to revise from Firestore function */
-    fun getFlashcardsToRevise(){
-
-        val list = mutableListOf<Flashcard>()
-        _currentReviseSet.value = FlashcardsSet("", "", "", "", "", "", "", "")
-        _reviseIndex.value = 0
-        _reviseFlashcards.value = mutableListOf()
-
-        firestoreDatabase.collection("Sets").document(currentSet.value!!.setID)
-            .collection("Flashcards").document("FlashcardsDocument").get()
-            .addOnSuccessListener { documentSnapshot ->
-
-                Log.d(TAG, "Flashcards to revise retrieved: ${documentSnapshot}")
-
-                for (index in 1..currentSet.value!!.next.toInt()){
-
-                    val termString = "term${index}"
-                    val defString = "def${index}"
-                    val termLearnedString = "term${index}learned"
-
-                    val flashcardObject = Flashcard(
-                        documentSnapshot.id,
-                        documentSnapshot.data?.get(termString).toString(),
-                        documentSnapshot.data?.get(defString).toString(),
-                        documentSnapshot.data?.get(termLearnedString).toString()
-                    )
-
-                    list.add(flashcardObject)
-                }
-
-                Log.d(TAG, "Adding list of flashcards to revise to ViewModel: $list")
-                _reviseFlashcards.value = list
-                Log.d(TAG, "Current list of flashcards to revise: ${reviseFlashcards.value}")
-
-                Log.d(TAG, "Setting currentReviseSet to currentSet value: ${currentSet.value}")
-                _currentReviseSet.value = currentSet.value
-                Log.d(TAG, "New currentReviseSet: ${currentStudySet.value}")
-
-            }
-            .addOnFailureListener { e ->
-                Log.e(TAG, "Could not retrieve flashcard to revise from Firestore due to: ${e.message}")
             }
 
     }
@@ -451,7 +347,7 @@ class AppViewModel: ViewModel() {
                 updateSetWordsCount()
 
                 Log.d(TAG, "Flashcard added to document with id: \"FlashcardsDocument\"")
-                Log.d(TAG, "Current flashcards: ${modifyFlashcards.value}")
+                Log.d(TAG, "Current flashcards: ${flashcards.value}")
             }
             .addOnFailureListener { e ->
                 Log.e(TAG, "Adding flashcard in the Firestore went wrong due to: ${e.message}")
@@ -570,7 +466,7 @@ class AppViewModel: ViewModel() {
     fun updateSetLearned(){
 
         val hashMapToUpdate = hashMapOf(
-            "learned" to currentStudySet.value!!.learned.toInt() + 1
+            "learned" to currentSet.value!!.learned.toInt() + 1
         )
 
         Log.d(TAG, "Updating \"learned\" of the studied set")
@@ -615,65 +511,6 @@ class AppViewModel: ViewModel() {
 
     }
 
-    /** get additional flashcards, shuffle, and set StudiedWordsCount to 0 */
-    fun getMoreStudyFlashcards(){
-
-        if(studyFlashcards.value!!.size < MAX_STUDY){
-
-            // get additional flashcards to study from Firestore
-            val howManyToGet = MAX_STUDY - studyFlashcards.value!!.size
-
-            // get additional flashcards from Firestore
-            firestoreDatabase.collection("Sets").document(currentStudySet.value!!.setID).collection("Flashcards")
-                .whereGreaterThan("created", latestStudyFlashcardTime.value!!).orderBy("created", Query.Direction.ASCENDING).limit(howManyToGet.toLong())
-                .get()
-                .addOnSuccessListener { querySnapshot ->
-
-                    Log.d(TAG, "Additional flashcards to study retrieved: ${querySnapshot.documents}")
-                    var list = mutableListOf<Flashcard>()
-
-                    for(flashcard in querySnapshot){
-
-                        val dataOfFlashcard = flashcard.data
-                        val flashcardObject = Flashcard(
-                            flashcard.id,
-                            dataOfFlashcard["term"].toString(),
-                            dataOfFlashcard["definition"].toString(),
-                            dataOfFlashcard["learned"].toString()
-                        )
-                        Log.d(TAG, "Flashcard: ${flashcardObject}")
-
-                        list.add(flashcardObject)
-
-//                        if(flashcardObject.created.toLong() > latestStudyFlashcardTime.value!!){
-//                            _latestStudyFlashcardTime.value = flashcardObject.created.toLong()
-//                        }
-
-                    }
-
-                    Log.d(TAG, "Adding list of flashcards to study to ViewModel: $list")
-                    _studyFlashcards.value!!.addAll(list)
-                    Log.d(TAG, "Current list of flashcards to study: ${studyFlashcards.value}")
-
-                    resetStudiedWordsCount()
-                    shuffleFlashcards()
-
-                }
-                .addOnFailureListener { e ->
-
-                    Log.e(TAG, "An error occurred during getting additional flashcards to study due to: ${e.message}")
-                    resetStudiedWordsCount()
-                    shuffleFlashcards()
-
-                }
-
-        } else {
-            resetStudiedWordsCount()
-            shuffleFlashcards()
-        }
-
-    }
-
     /** Remove learned flashcards to study */
     fun removeLearned(){
 
@@ -696,7 +533,7 @@ class AppViewModel: ViewModel() {
     }
 
     /** Shuffle list of flashcards to study */
-    fun shuffleFlashcards(){
+    fun shuffleStudyFlashcards(){
 
         Log.d(TAG, "Shuffling flashcards to study")
 
@@ -704,6 +541,7 @@ class AppViewModel: ViewModel() {
 
             var list = studyFlashcards.value!!.shuffled()
             Log.d(TAG, "Shuffled list: $list")
+
             while (lastStudyFlashcard.value == list[0] && studyFlashcards.value!!.size != 1) {
                 list = studyFlashcards.value!!.shuffled()
                 Log.d(TAG, "Shuffled list: $list")
@@ -715,7 +553,10 @@ class AppViewModel: ViewModel() {
             Log.d(TAG, "Shuffled list of flashcards: ${studyFlashcards.value}")
 
             _lastStudyFlashcard.value = list[list.size - 1]
+
         }
+
+        _studyShuffled.value = true
 
     }
 
@@ -728,8 +569,13 @@ class AppViewModel: ViewModel() {
     /** reset reviseIndex variable */
     fun resetReviseIndex(){
         _reviseIndex.value = 0
-        _reviseFlashcards.value = reviseFlashcards.value
         Log.d(TAG, "Revise index reset to 0")
+    }
+
+    /** reset studyIndex variable */
+    fun resetStudyIndex(){
+        _studyIndex.value = 0
+        Log.d(TAG, "Study index reset to 0")
     }
 
     /** reset setDeleted variable */
@@ -762,10 +608,17 @@ class AppViewModel: ViewModel() {
         _reviseIndex.value = reviseIndex.value!! + 1
     }
 
+    /** Increment study index */
+    fun incrementStudyIndex(){
+        _studyIndex.value = studyIndex.value!! + 1
+    }
+
     /** Set current set */
     fun setCurrentSet(newCurrentSet: FlashcardsSet){
         _flashcards.value = mutableListOf()
+        _studyFlashcards.value = mutableListOf()
         _currentSet.value = newCurrentSet
+        _studyIndex.value = 0
         Log.d(TAG, "New currentSet: ${currentSet.value}")
         getFlashcards()
     }

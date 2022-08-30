@@ -93,28 +93,14 @@ class SetOptionFragment : Fragment() {
     /** data binding function on study button clicked */
     fun studyFlashcards(){
 
-        if(appViewModel.currentSet.value != appViewModel.currentStudySet.value){
-            try {
+        appViewModel.resetStudiedWordsCount()
 
-                Log.d(TAG, "Retrieving flashcards to study from Firestore")
-                appViewModel.getFlashcardsToStudy()
-
-                if(appViewModel.currentSet.value!!.wordsCount == appViewModel.currentSet.value!!.learned){
-                    appViewModel.setStatusLearned()
-                }
-
-                val action = SetOptionFragmentDirections.actionSetOptionFragmentToStudyFragment()
-                findNavController().navigate(action)
-
-            } catch (e:Exception) {
-                Log.e(TAG, "Cannot retrieve flashcards to study from Firestore due to: ${e.message}")
-                Toast.makeText(requireContext(), "Something went wrong...", Toast.LENGTH_SHORT).show()
-            }
-        } else {
-            Log.d(TAG, "Flashcards to study already set")
-            val action = SetOptionFragmentDirections.actionSetOptionFragmentToStudyFragment()
-            findNavController().navigate(action)
+        if(appViewModel.currentSet.value!!.wordsCount == appViewModel.currentSet.value!!.learned){
+            appViewModel.setStatusLearned()
         }
+
+        val action = SetOptionFragmentDirections.actionSetOptionFragmentToStudyFragment()
+        findNavController().navigate(action)
 
     }
 
@@ -122,36 +108,11 @@ class SetOptionFragment : Fragment() {
     fun reviseFlashcards(){
 
         if(appViewModel.currentSet.value!!.wordsCount.toInt() > 0) {
-
-        } else {
-
-        }
-
-        if(appViewModel.currentSet.value != appViewModel.currentReviseSet.value){
-            if(appViewModel.currentReviseSet.value!!.wordsCount != "0") {
-                try {
-
-                    Log.d(TAG, "Retrieving flashcards to revise from Firestore")
-                    appViewModel.getFlashcardsToRevise()
-
-                    val action = SetOptionFragmentDirections.actionSetOptionFragmentToReviseFragment()
-                    findNavController().navigate(action)
-
-                } catch (e: Exception) {
-                    Log.e(
-                        TAG,
-                        "Cannot retrieve flashcards to revise from Firestore due to: ${e.message}"
-                    )
-                    Toast.makeText(requireContext(), "Something went wrong...", Toast.LENGTH_SHORT).show()
-                }
-            } else {
-                Log.d(TAG, "No flashcards to retrieve")
-                Toast.makeText(requireContext(), "No flashcards to revise...", Toast.LENGTH_SHORT).show()
-            }
-        } else {
-            Log.d(TAG, "Flashcards to revise already set")
             val action = SetOptionFragmentDirections.actionSetOptionFragmentToReviseFragment()
             findNavController().navigate(action)
+        } else {
+            Log.d(TAG, "No flashcards to revise!")
+            Toast.makeText(requireContext(), "No flashcards to revise...", Toast.LENGTH_SHORT).show()
         }
 
     }
@@ -167,67 +128,6 @@ class SetOptionFragment : Fragment() {
     /** data binding function on delete button clicked */
     fun deleteFlashcards(){
         alertDialog.show()
-    }
-
-    fun goToTheNextScreen(){
-
-        Log.d(TAG, "Going to the next screen, chosen option: ${appViewModel.option.value}")
-
-
-        when(appViewModel.option.value){
-
-            "Study" -> {
-
-                if(appViewModel.currentSet.value != appViewModel.currentStudySet.value){
-                    try {
-
-                        Log.d(TAG, "Retrieving flashcards to study from Firestore")
-                        appViewModel.getFlashcardsToStudy()
-
-                        if(appViewModel.currentSet.value!!.wordsCount == appViewModel.currentSet.value!!.learned){
-                            appViewModel.setStatusLearned()
-                        }
-
-                        val action = SetOptionFragmentDirections.actionSetOptionFragmentToStudyFragment()
-                        findNavController().navigate(action)
-
-                    } catch (e:Exception) {
-                        Log.e(TAG, "Cannot retrieve flashcards to study from Firestore due to: ${e.message}")
-                        Toast.makeText(requireContext(), "Something went wrong...", Toast.LENGTH_SHORT).show()
-                    }
-                } else {
-                    Log.d(TAG, "Flashcards to study already set")
-                    val action = SetOptionFragmentDirections.actionSetOptionFragmentToStudyFragment()
-                    findNavController().navigate(action)
-                }
-
-            }
-
-            "Revise" -> {
-                if(appViewModel.currentSet.value != appViewModel.currentReviseSet.value){
-                    try {
-
-                        Log.d(TAG, "Retrieving flashcards to revise from Firestore")
-                        appViewModel.getFlashcardsToRevise()
-
-                        val action = SetOptionFragmentDirections.actionSetOptionFragmentToReviseFragment()
-                        findNavController().navigate(action)
-
-                    } catch(e: Exception) {
-                        Log.e(TAG, "Cannot retrieve flashcards to revise from Firestore due to: ${e.message}")
-                        Toast.makeText(requireContext(), "Something went wrong...", Toast.LENGTH_SHORT).show()
-                    }
-                } else {
-                    Log.d(TAG, "Flashcards to revise already set")
-                    val action = SetOptionFragmentDirections.actionSetOptionFragmentToReviseFragment()
-                    findNavController().navigate(action)
-                }
-            }
-
-        }
-
-
-
     }
 
     /** hide everything on the screen */
