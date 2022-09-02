@@ -45,11 +45,18 @@ class AddFlashcardsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        if(appViewModel.currentSet.value!!.type == "defined"){
+            binding.addFloatingActionButton.visibility = View.INVISIBLE
+        }
+
         /** RecyclerView setup */
         recyclerView = binding.flashcardsRecyclerview
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
-        val adapter = FlashcardsCreateAdapter{ flashcard ->
+        val adapter = FlashcardsCreateAdapter{ position ->
+
+            val action = AddFlashcardsFragmentDirections.actionAddFlashcardsFragmentToModifyFlashcardFragment(position)
+            findNavController().navigate(action)
 
         }
 

@@ -95,10 +95,6 @@ class SetOptionFragment : Fragment() {
 
         appViewModel.resetStudiedWordsCount()
 
-        if(appViewModel.currentSet.value!!.wordsCount == appViewModel.currentSet.value!!.learned){
-            appViewModel.setStatusLearned()
-        }
-
         val action = SetOptionFragmentDirections.actionSetOptionFragmentToStudyFragment()
         findNavController().navigate(action)
 

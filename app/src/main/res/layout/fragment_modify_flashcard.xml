@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    tools:context=".fragments.ModifyFlashcardFragment">
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/definition_text_input"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="220dp"
+        android:layout_marginHorizontal="16dp"
+        android:hint="@string/definition_text_hint"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:startIconDrawable="@drawable/ic_edit"
+        app:startIconTint="?attr/colorPrimaryVariant"
+        app:iconTint="?attr/colorSecondary"
+        app:endIconMode="clear_text"
+        app:helperText="@string/enter_flashcard_term_helper_text"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/term_text_input"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="18dp"
+        android:layout_marginHorizontal="16dp"
+        android:hint="@string/term_text_hint"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/definition_text_input"
+        app:startIconDrawable="@drawable/ic_edit"
+        app:startIconTint="?attr/colorPrimaryVariant"
+        app:endIconMode="clear_text"
+        app:helperText="@string/enter_flashcard_term_helper_text"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <ImageView
+        android:id="@+id/learned_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        app:srcCompat="@drawable/ic_learned"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/learned_switch"
+        app:layout_constraintBottom_toBottomOf="@id/learned_switch"/>
+
+    <com.google.android.material.switchmaterial.SwitchMaterial
+        android:id="@+id/learned_switch"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginEnd="8dp"
+        android:text="@string/learned_text"
+        android:checked="true"
+        android:layout_marginStart="16dp"
+        app:layout_constraintTop_toBottomOf="@id/definition_text_input"
+        app:layout_constraintStart_toEndOf="@id/learned_icon"
+        app:layout_constraintEnd_toEndOf="parent"
+        style="@style/LearnedSwitch"/>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/save_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="@string/save_text"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/learned_switch"
+        style="@style/AppButton"/>
+
+    <View
+        android:id="@+id/divider_left"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_marginLeft="16dp"
+        android:background="#000000"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/or_divider_text"
+        app:layout_constraintTop_toTopOf="@id/or_divider_text"
+        app:layout_constraintBottom_toBottomOf="@id/or_divider_text"/>
+
+    <TextView
+        android:id="@+id/or_divider_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="24dp"
+        android:text="@string/or_text"
+        android:textColor="#000000"
+        app:layout_constraintStart_toEndOf="@id/divider_left"
+        app:layout_constraintEnd_toStartOf="@id/divider_right"
+        app:layout_constraintTop_toBottomOf="@id/save_button"/>
+
+    <View
+        android:id="@+id/divider_right"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_marginRight="16dp"
+        android:background="#000000"
+        app:layout_constraintStart_toEndOf="@id/or_divider_text"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/or_divider_text"
+        app:layout_constraintBottom_toBottomOf="@id/or_divider_text"/>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/delete_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="@string/delete_flashcard_text"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/or_divider_text"
+        style="@style/AppButton"/>
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

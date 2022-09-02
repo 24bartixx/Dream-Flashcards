@@ -42,6 +42,11 @@
     <string name="enter_flashcard_definition_helper_text">Enter the definition</string>
     <string name="create_flashcard_button_text">Create flashcard</string>
 
+    <!-- Modify Flashcard Fragment -->
+    <string name="save_text">Save</string>
+    <string name="learned_text">Learned</string>
+    <string name="delete_flashcard_text">Delete</string>
+
     <!-- Sets Fragment -->
     <string name="words_text"><b>Words</b>: </string>
 
@@ -51,14 +56,6 @@
     <string name="revise_button_text">Revise all</string>
     <string name="modify_button_text">Modify set</string>
     <string name="delete_button_text">Delete set</string>
-
-    <string name="unlearnt_radio_button_text">Study unlearnt flashcards</string>
-    <string name="all_radio_button_text">Revise all flashcards</string>
-
-    <string name="proceed_button_text">Proceed</string>
-    <string name="study_option">Study</string>
-    <string name="revise_option">Revise</string>
-    <string name="modify_option">Modify</string>
 
     <!-- Study Fragment -->
     <string name="show_definition_button_text">Show definition</string>
@@ -75,5 +72,7 @@
     <string name="facebook_app_id">583291003294329</string>
     <string name="fb_login_protocol_scheme">fb583291003294329</string>
     <string name="facebook_client_token">a035f2bd445e59ca0442c32fc4e135b6</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

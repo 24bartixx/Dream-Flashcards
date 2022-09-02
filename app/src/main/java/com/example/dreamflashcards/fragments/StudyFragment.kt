@@ -45,7 +45,7 @@ class StudyFragment : Fragment() {
         progressDialog.setMessage("Please wait...")
         progressDialog.setCanceledOnTouchOutside(false)
 
-        if(appViewModel.studySetStudied.value!!){ showCongratulationsText() }
+        //if(appViewModel.studySetStudied.value!!){ showCongratulationsText() }
 
         // set onClick listeners
         binding.apply {
@@ -106,12 +106,11 @@ class StudyFragment : Fragment() {
     /** handle click on option button */
     private fun optionButtonClicked(option: String){
 
-        if(option == "yes"){
-            // appViewModel.updateFlashcardLearned(appViewModel.studyFlashcards.value!![appViewModel.studyIndex.value!!])
-            // increment wordsCountStudied
-        }
-
         appViewModel.incrementStudyIndex()
+
+        if(option == "Yes"){
+            appViewModel.updateFlashcardLearned(appViewModel.studyFlashcards.value!![appViewModel.studyIndex.value!! - 1])
+        }
 
         if(appViewModel.studyIndex.value!! == appViewModel.studyFlashcards.value!!.size){
             Log.d(TAG, "Resetting studyIndex and shuffling study flashcards")
@@ -126,23 +125,26 @@ class StudyFragment : Fragment() {
     /** show term and button function */
     private fun showTermAndButton(){
 
-        Log.d(TAG, "Size of list to study: ${appViewModel.studyFlashcards.value!!.size}")
-        Log.d(TAG, "Getting flashcard with index: ${appViewModel.studyIndex.value!!}")
+        if(appViewModel.studyFlashcards.value!!.size == 0){
+            showCongratulationsText()
+        } else {
+            Log.d(TAG, "Size of list to study: ${appViewModel.studyFlashcards.value!!.size}")
+            Log.d(TAG, "Getting flashcard with index: ${appViewModel.studyIndex.value!!}")
 
-        binding.apply {
-            noButton.visibility = View.INVISIBLE
-            mediumButton.visibility = View.INVISIBLE
-            yesButton.visibility = View.INVISIBLE
-            definitionCard.visibility = View.INVISIBLE
-            congratulationsText.visibility = View.INVISIBLE
-            happyIcon.visibility = View.INVISIBLE
-            termCard.visibility = View.VISIBLE
-            showDefinitionButton.visibility = View.VISIBLE
+            binding.apply {
+                noButton.visibility = View.INVISIBLE
+                mediumButton.visibility = View.INVISIBLE
+                yesButton.visibility = View.INVISIBLE
+                definitionCard.visibility = View.INVISIBLE
+                congratulationsText.visibility = View.INVISIBLE
+                happyIcon.visibility = View.INVISIBLE
+                termCard.visibility = View.VISIBLE
+                showDefinitionButton.visibility = View.VISIBLE
 
-            term.text = appViewModel.studyFlashcards.value!![appViewModel.studyIndex.value!!].term
-            definition.text = appViewModel.studyFlashcards.value!![appViewModel.studyIndex.value!!].definition
+                term.text = appViewModel.studyFlashcards.value!![appViewModel.studyIndex.value!!].term
+                definition.text = appViewModel.studyFlashcards.value!![appViewModel.studyIndex.value!!].definition
+            }
         }
-
     }
 
     /** show definition function */
@@ -154,58 +156,6 @@ class StudyFragment : Fragment() {
             noButton.visibility = View.VISIBLE
             mediumButton.visibility = View.VISIBLE
         }
-    }
-
-
-
-
-
-    /** visibility on click configuration function */
-    private fun changeVisibility(option: String){
-
-        if (option == "Show definition"){
-
-            binding.apply {
-                definitionCard.visibility = View.VISIBLE
-                showDefinitionButton.visibility = View.INVISIBLE
-                yesButton.visibility = View.VISIBLE
-                mediumButton.visibility = View.VISIBLE
-                noButton.visibility = View.VISIBLE
-            }
-
-        } else {
-
-            if(option == "Yes") {
-
-                // update the flashcard in Firestore
-                appViewModel.setFlashcardLearnedToFirestore(appViewModel.studiedWordsCount.value!! - 1)
-
-            }
-
-            // if there is no more flashcards to learn left, get some, shuffle, set studiedWordsCount to 0
-            if(appViewModel.studiedWordsCount.value!! == appViewModel.studyFlashcards.value!!.size) {
-
-                if(appViewModel.studyFlashcards.value!!.size == AppViewModel.MAX_STUDY) {
-                    appViewModel.removeLearned()
-                    ///appViewModel.getMoreStudyFlashcards()
-                }
-                // if there is no more flashcard to get from Firebase
-                else {
-                    appViewModel.removeLearned()
-                    appViewModel.resetStudiedWordsCount()
-                    //appViewModel.shuffleFlashcards()
-                    if(appViewModel.studyFlashcards.value!!.size == 0){
-                        appViewModel.setStatusLearned()
-                    }
-                    if(appViewModel.studyFlashcards.value!!.size == 1){
-                        //bindToTheNextFlashcard()
-                    }
-                }
-
-            }
-
-        }
-
     }
 
     override fun onDestroy() {

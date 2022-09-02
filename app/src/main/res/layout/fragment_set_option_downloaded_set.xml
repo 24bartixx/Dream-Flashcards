@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="fragment"
+            type="com.example.dreamflashcards.fragments.SetOptionDownloadedSetFragment"/>
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="16dp"
+        tools:context=".fragments.SetOptionDownloadedSetFragment">
+
+        <ImageView
+            android:id="@+id/set_image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:srcCompat="@drawable/english_icon"
+            app:layout_constraintBottom_toTopOf="@id/set_name"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <TextView
+            android:id="@+id/set_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_marginBottom="36dp"
+            android:textSize="36sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/study_button"
+            tools:text="Top Gun"
+            style = "@style/HeadlineText"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/study_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:layout_marginHorizontal="16dp"
+            android:text="@string/study_button_text"
+            android:onClick="@{() -> fragment.studyOption()}"
+            app:layout_constraintBottom_toTopOf="@id/revise_button"
+            app:layout_constraintStart_toStartOf="parent"
+            style="@style/AppButton"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/revise_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="100dp"
+            android:layout_marginHorizontal="16dp"
+            android:text="@string/revise_button_text"
+            android:onClick="@{() -> fragment.revisesOption()}"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            style="@style/AppButton"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/browse_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginHorizontal="16dp"
+            android:text="@string/browse_button_text"
+            android:onClick="@{() -> fragment.browseOption()}"
+            app:layout_constraintTop_toBottomOf="@id/revise_button"
+            app:layout_constraintStart_toStartOf="parent"
+            style="@style/AppButton"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

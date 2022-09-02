@@ -19,5 +19,14 @@
     <style name="HeadlineText" parent="@style/TextAppearance.MaterialComponents.Headline4">
         <item name="android:textColor">?attr/colorOnSurface</item>
     </style>
+
+    <style name="LearnedSwitch" parent="Widget.MaterialComponents.CompoundButton.Switch">
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:textAppearance">?attr/textAppearanceBody1</item>
+    </style>
+
+    <style name="Outline" parent="Widget.Material3.TextInputLayout.OutlinedBox">
+
+    </style>
     
 </resources>

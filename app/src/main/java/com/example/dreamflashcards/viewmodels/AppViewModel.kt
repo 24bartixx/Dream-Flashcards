@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import com.example.dreamflashcards.models.Flashcard
 import com.example.dreamflashcards.models.FlashcardsSet
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.ktx.firestore
@@ -27,10 +28,6 @@ class AppViewModel: ViewModel() {
     // current set
     private val _currentSet = MutableLiveData<FlashcardsSet>(FlashcardsSet("Empty Current set", "", "", "", "", "", "", ""))
     val currentSet: LiveData<FlashcardsSet> = _currentSet
-
-    // current set to study
-    private val _currentStudySet = MutableLiveData<FlashcardsSet>(FlashcardsSet("", "", "", "", "", "", "", ""))
-    val currentStudySet: LiveData<FlashcardsSet> = _currentStudySet
 
     // current download set
     private val _currentDownloadSet = MutableLiveData<FlashcardsSet>(FlashcardsSet("", "", "", "", "", "", "", ""))
@@ -73,9 +70,7 @@ class AppViewModel: ViewModel() {
     private val _lastStudyFlashcard = MutableLiveData<Flashcard>()
     val lastStudyFlashcard: LiveData<Flashcard> = _lastStudyFlashcard
 
-    // indicates whether the set is learned or not
-    private val _studySetStudied = MutableLiveData<Boolean>(false)
-    val studySetStudied: LiveData<Boolean> = _studySetStudied
+
 
     private val _studyShuffled = MutableLiveData<Boolean>(false)
     val studyShuffled: LiveData<Boolean> = _studyShuffled
@@ -100,7 +95,6 @@ class AppViewModel: ViewModel() {
 
     companion object {
         private const val TAG = "AppViewModel"
-        const val MAX_STUDY = 3
     }
 
     init {
@@ -336,21 +330,222 @@ class AppViewModel: ViewModel() {
             .addOnSuccessListener {
 
                 var listToUpdate = flashcards.value
+                var studyListToUpdate = studyFlashcards.value
+
                 if(listToUpdate.isNullOrEmpty()) {
                     listToUpdate = mutableListOf(Flashcard(currentSet.value!!.next, term, definition, "no"))
                 } else {
                     listToUpdate.add(Flashcard(currentSet.value!!.next, term, definition, "no"))
                 }
 
+                if(studyListToUpdate.isNullOrEmpty()){
+                    studyListToUpdate = mutableListOf(Flashcard(currentSet.value!!.next, term, definition, "no"))
+                } else {
+                    studyListToUpdate.add(Flashcard(currentSet.value!!.next, term, definition, "no"))
+                }
+
                 if(!listToUpdate.isNullOrEmpty())  { _flashcards.value = listToUpdate!! }
+                if(!studyListToUpdate.isNullOrEmpty()) { _studyFlashcards.value = studyListToUpdate!! }
 
                 updateSetWordsCount()
 
                 Log.d(TAG, "Flashcard added to document with id: \"FlashcardsDocument\"")
                 Log.d(TAG, "Current flashcards: ${flashcards.value}")
+                Log.d(TAG, "Current study flashcards: ${studyFlashcards.value}")
             }
             .addOnFailureListener { e ->
                 Log.e(TAG, "Adding flashcard in the Firestore went wrong due to: ${e.message}")
+            }
+    }
+
+    /** modify flashcard on save in Modify Flashcard Fragment */
+    fun modifyFlashcard(flashcard: Flashcard, learnedChanged: Boolean){
+
+        val hashMapToUpdate = hashMapOf(
+            "term${flashcard.flashcardId}" to flashcard.term,
+            "def${flashcard.flashcardId}" to flashcard.definition,
+            "term${flashcard.flashcardId}learned" to flashcard.learned
+        )
+
+        firestoreDatabase.collection("Sets").document(currentSet.value!!.setID)
+            .collection("Flashcards").document("FlashcardsDocument")
+            .set(hashMapToUpdate, SetOptions.merge())
+            .addOnSuccessListener {
+
+                if(learnedChanged) {
+                    modifySetLearnedChanged(flashcard.learned)
+                }
+
+                var index = -1
+                var properIndex = -1
+                for(flashcardsFlashcard in flashcards.value!!){
+                    index += 1
+                    if(flashcard.flashcardId == flashcardsFlashcard.flashcardId){
+                        properIndex = index
+                    }
+                }
+                if(properIndex > 0) _flashcards.value!![properIndex] = flashcard
+
+                index = -1
+                properIndex = -1
+                for(flashcardsFlashcard in studyFlashcards.value!!){
+                    index += 1
+                    if(flashcard.flashcardId == flashcardsFlashcard.flashcardId){
+                        properIndex = index
+                    }
+                }
+
+                if(properIndex > 0) _studyFlashcards.value!![properIndex] = flashcard
+
+                if (flashcard !in studyFlashcards.value!! && flashcard.learned == "no") {
+                    val newStudyFlashcards = _studyFlashcards.value!!
+                    newStudyFlashcards.add(flashcard)
+                    _studyFlashcards.value = newStudyFlashcards
+                }
+
+                Log.d(TAG, "Flashcard modified")
+                Log.d(TAG, "Current modified flashcards: ${flashcards.value!!}")
+                Log.d(TAG, "Current modified study flashcards: ${studyFlashcards.value!!}")
+
+            }
+            .addOnFailureListener { e ->
+                Log.e(TAG, "Cannot update flashcard due to: ${e.message}")
+            }
+
+    }
+
+    /** modify set document when learned changed */
+    private fun modifySetLearnedChanged(learned: String){
+
+        var setLearned = currentSet.value!!.learned.toInt()
+        if(learned == "no"){
+            setLearned -= 1
+        } else if(learned == "yes") {
+            setLearned += 1
+        }
+
+        firestoreDatabase.collection("Sets").document(currentSet.value!!.setID).update("learned", setLearned)
+            .addOnSuccessListener {
+                Log.d(TAG, "Learned od the set successfully updated")
+                _currentSet.value!!.learned = setLearned.toString()
+            }
+            .addOnFailureListener { e ->
+                Log.e(TAG, "Cannot change learned of the set due to: ${e.message}")
+            }
+
+    }
+
+    /** delete flashcard */
+    fun deleteFlashcard(flashcard: Flashcard){
+
+        val updates = hashMapOf<String, Any>(
+            "term${flashcard.flashcardId}" to FieldValue.delete(),
+            "def${flashcard.flashcardId}" to FieldValue.delete(),
+            "term${flashcard.flashcardId}learned" to FieldValue.delete()
+        )
+
+        firestoreDatabase.collection("Sets").document(currentSet.value!!.setID)
+            .collection("Flashcards").document("FlashcardsDocument").update(updates)
+            .addOnSuccessListener {
+
+                Log.d(TAG, "Flashcard deleted from Firestore!")
+
+                modifySetWordsCountChanged(flashcard.learned)
+
+                _flashcards.value!!.remove(flashcard)
+                _studyFlashcards.value!!.remove(flashcard)
+
+            }
+            .addOnFailureListener { e ->
+                Log.e(TAG, "Cannot delete flashcards in Firestore due to: ${e.message}")
+            }
+
+    }
+
+    /** delete one flashcard from the set's words_count */
+    private fun modifySetWordsCountChanged(learned: String){
+
+        var hashMapToUpdate: HashMap<String, Int>
+
+        if(learned == "yes") {
+            hashMapToUpdate = hashMapOf(
+                "learned" to currentSet.value!!.learned.toInt() - 1,
+                "words_count" to currentSet.value!!.wordsCount.toInt() - 1
+            )
+        } else {
+            hashMapToUpdate = hashMapOf(
+                "words_count" to currentSet.value!!.wordsCount.toInt() - 1
+            )
+        }
+
+        firestoreDatabase.collection("Sets").document(currentSet.value!!.setID)
+            .set(hashMapToUpdate, SetOptions.merge())
+            .addOnSuccessListener {
+
+                Log.d(TAG, "\"words_count\" in Firestore incremented")
+                _currentSet.value!!.wordsCount = (currentSet.value!!.wordsCount.toInt() - 1).toString()
+                if(learned == "yes") _currentSet.value!!.learned = (currentSet.value!!.learned.toInt() - 1).toString()
+
+            }
+            .addOnFailureListener { e ->
+                Log.e(TAG, "Cannot increment \"words_count\" in Firestore due to: ${e.message}")
+            }
+    }
+
+    /** update flashcards to learned */
+    fun updateFlashcardLearned(flashcard: Flashcard){
+
+        // update studyFlashcards
+        val studyList = studyFlashcards.value!!
+        studyList.remove(flashcard)
+        _studyFlashcards.value = studyList
+
+        //update studyIndex
+        _studyIndex.value = studyIndex.value!! - 1
+
+        // update flashcards
+        var flashcardsList = flashcards.value!!
+        for (someFlashcard in flashcardsList){
+            if(someFlashcard.flashcardId == flashcard.flashcardId){
+                someFlashcard.learned = "yes"
+            }
+        }
+        _flashcards.value = flashcardsList
+
+        // update current set
+        _currentSet.value!!.learned = (currentSet.value!!.learned.toInt() + 1).toString()
+
+        incrementStudiedWordsCount()
+
+        Log.d(TAG, "Updating flashcard learned")
+
+        firestoreDatabase.collection("Sets").document(currentSet.value!!.setID)
+            .collection("Flashcards").document("FlashcardsDocument")
+            .update("term${flashcard.flashcardId}learned", "yes")
+            .addOnSuccessListener {
+                Log.d(TAG, "Updated flashcard to learned in Firestore")
+                updateSetLearned()
+            }
+            .addOnFailureListener { e ->
+                Log.d(TAG, "Could not update flashcard to learned due to: ${e.message}")
+            }
+
+    }
+
+    /** update "learned" of the studied set */
+    private fun updateSetLearned(){
+
+        Log.d(TAG, "Updating \"learned\" of the studied set")
+        Log.d(TAG, "Current set's learned: ${currentSet.value!!.learned}")
+        firestoreDatabase.collection("Sets").document(currentSet.value!!.setID)
+            .update("learned", currentSet.value!!.learned.toInt())
+            .addOnSuccessListener{
+
+                Log.d(TAG, "Updated \"learned\" of the studied set")
+
+            }
+            .addOnFailureListener{ e ->
+                Log.d(TAG, "Could not update flashcard to learned due to: ${e.message}")
             }
     }
 
@@ -462,76 +657,6 @@ class AppViewModel: ViewModel() {
 
     }
 
-    /** update "learned" of the studied set */
-    fun updateSetLearned(){
-
-        val hashMapToUpdate = hashMapOf(
-            "learned" to currentSet.value!!.learned.toInt() + 1
-        )
-
-        Log.d(TAG, "Updating \"learned\" of the studied set")
-        firestoreDatabase.collection("Sets").document(currentStudySet.value!!.setID).set(hashMapToUpdate, SetOptions.merge())
-            .addOnSuccessListener{
-
-                var newCurrentStudySet =  currentStudySet.value!!
-                newCurrentStudySet.learned = (currentStudySet.value!!.learned.toInt() + 1).toString()
-                _currentStudySet.value = newCurrentStudySet
-
-                Log.d(TAG, "Updated \"learned\" of the studied set")
-
-            }
-    }
-
-    /** make flashcard learned */
-    fun setFlashcardLearnedToFirestore(properIndex: Int){
-
-        // flashcard to be changed to learned
-        Log.d(TAG, "Updating flashcard with with index ${properIndex} to learned")
-        val flashcard = studyFlashcards.value!![properIndex]
-        val updatedFlashcard = Flashcard(flashcard.flashcardId, flashcard.term, flashcard.definition, "yes")
-
-        // update viewModel
-        val list = studyFlashcards.value!!
-        list[properIndex] = updatedFlashcard
-        _studyFlashcards.value = list
-
-        Log.d(TAG, "ViewModel updated with learned flashcard")
-
-        // hashMap to update Firebase
-        val data = hashMapOf("learned" to "yes")
-
-        // update Firestore
-        firestoreDatabase.collection("Sets").document(currentStudySet.value!!.setID)
-            .collection("Flashcards").document(flashcard.flashcardId).set(data, SetOptions.merge())
-            .addOnSuccessListener {
-                updateSetLearned()
-            }
-
-        Log.d(TAG, "Flashcard with ID ${flashcard.flashcardId} updated to learned")
-
-    }
-
-    /** Remove learned flashcards to study */
-    fun removeLearned(){
-
-        Log.d(TAG, "Removing most flashcards")
-
-        var list = mutableListOf<Flashcard>()
-
-        for(flashcard in studyFlashcards.value!!){
-            if(flashcard.learned == "no") {
-                Log.d(TAG, "Unlearned flashcard: ${flashcard.flashcardId}")
-                list.add(flashcard)
-            }
-        }
-
-        ///resetStudiedWordsCount()
-        _studyFlashcards.value = list
-
-        Log.d(TAG, "Removed all learned flashcards from list to study")
-
-    }
-
     /** Shuffle list of flashcards to study */
     fun shuffleStudyFlashcards(){
 
@@ -586,15 +711,6 @@ class AppViewModel: ViewModel() {
     /** reset downloadComplete variable */
     fun resetDownloadComplete(){
         _downloadComplete.value = false
-    }
-
-    /** all flashcards to study are learned */
-    fun setStatusLearned() {
-        if(studyFlashcards.value!!.size == 0) {
-            Log.d(TAG, "Setting current study set as learned")
-            _studySetStudied.value = true
-            _studyFlashcards.value = mutableListOf()
-        }
     }
 
     /** Increment studied words count */

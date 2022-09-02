@@ -40,6 +40,12 @@
             app:restoreState="true"
             app:popUpTo="@id/setsFragment"
             app:popUpToSaveState="true" />
+        <action
+            android:id="@+id/action_setsFragment_to_setOptionDownloadedSetFragment"
+            app:destination="@id/setOptionDownloadedSetFragment"
+            app:restoreState="true"
+            app:popUpTo="@id/setsFragment"
+            app:popUpToSaveState="true" />
     </fragment>
     <fragment
         android:id="@+id/addFlashcardsFragment"
@@ -54,6 +60,11 @@
         <argument
             android:name="fromWhere"
             app:argType="string" />
+        <action
+            android:id="@+id/action_addFlashcardsFragment_to_modifyFlashcardFragment"
+            app:destination="@id/modifyFlashcardFragment"
+            app:restoreState="true"
+            app:popUpToSaveState="true"/>
     </fragment>
     <fragment
         android:id="@+id/createFlashcardFragment"
@@ -70,19 +81,19 @@
             android:id="@+id/action_setOptionFragment_to_studyFragment"
             app:destination="@id/studyFragment"
             app:restoreState="true"
-            app:popUpTo="@id/setsFragment"
+            app:popUpTo="@id/setOptionFragment"
             app:popUpToSaveState="true"/>
         <action
             android:id="@+id/action_setOptionFragment_to_addFlashcardsFragment"
             app:destination="@id/addFlashcardsFragment"
             app:restoreState="true"
-            app:popUpTo="@id/setsFragment"
+            app:popUpTo="@id/setOptionFragment"
             app:popUpToSaveState="true"/>
         <action
             android:id="@+id/action_setOptionFragment_to_reviseFragment"
             app:destination="@id/reviseFragment"
             app:restoreState="true"
-            app:popUpTo="@id/setsFragment"
+            app:popUpTo="@id/setOptionFragment"
             app:popUpToSaveState="true"/>
     </fragment>
     <fragment
@@ -93,11 +104,40 @@
     <fragment
         android:id="@+id/reviseFragment"
         android:name="com.example.dreamflashcards.fragments.ReviseFragment"
-        android:label="fragment_revise"
+        android:label="Dream Flashcards"
         tools:layout="@layout/fragment_revise" />
     <fragment
         android:id="@+id/setOptionDownloadFragment"
         android:name="com.example.dreamflashcards.fragments.SetOptionDownloadFragment"
-        android:label="fragment_set_option_download"
+        android:label="Dream Flashcards"
         tools:layout="@layout/fragment_set_option_download" />
+    <fragment
+        android:id="@+id/modifyFlashcardFragment"
+        android:name="com.example.dreamflashcards.fragments.ModifyFlashcardFragment"
+        android:label="Modify flashcard"
+        tools:layout="@layout/fragment_modify_flashcard">
+        <argument
+            android:name="position"
+            app:argType="integer" />
+    </fragment>
+    <fragment
+        android:id="@+id/setOptionDownloadedSetFragment"
+        android:name="com.example.dreamflashcards.fragments.SetOptionDownloadedSetFragment"
+        android:label="SetOptionDownloadedSetFragment" >
+        <action
+            android:id="@+id/action_setOptionDownloadedSetFragment_to_studyFragment"
+            app:destination="@id/studyFragment"
+            app:restoreState="true"
+            app:popUpTo="@id/setOptionDownloadedSetFragment"
+            app:popUpToSaveState="true"/>
+        <action
+            android:id="@+id/action_setOptionDownloadedSetFragment_to_reviseFragment"
+            app:destination="@id/reviseFragment"
+            app:restoreState="true"
+            app:popUpTo="@id/setOptionDownloadedSetFragment"
+            app:popUpToSaveState="true"/>
+        <action
+            android:id="@+id/action_setOptionDownloadedSetFragment_to_addFlashcardsFragment"
+            app:destination="@id/addFlashcardsFragment" />
+    </fragment>
 </navigation>

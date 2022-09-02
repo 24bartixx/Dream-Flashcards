@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.NavDirections
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -52,7 +53,15 @@ class SetsFragment : Fragment() {
 
         val adapter = SetsAdapter{ flashcardSet ->
 
-            if(flashcardSet != appViewModel.currentSet.value){
+            var action: NavDirections
+
+            if(flashcardSet.type == "user") {
+                action = SetsFragmentDirections.actionSetsFragmentToSetOptionFragment()
+            } else {
+                action = SetsFragmentDirections.actionSetsFragmentToSetOptionDownloadedSetFragment()
+            }
+
+            if (flashcardSet != appViewModel.currentSet.value) {
                 try {
 
                     // set currentSet and retrieve flashcards from Firebase
@@ -62,10 +71,10 @@ class SetsFragment : Fragment() {
 
                     // got to the next screen
                     Log.d(TAG, "Moving to the next screen")
-                    val action = SetsFragmentDirections.actionSetsFragmentToSetOptionFragment()
+
                     findNavController().navigate(action)
 
-                } catch(e: Exception) {
+                } catch (e: Exception) {
                     Log.e(TAG, "Cannot set current set in viewModel due to: ${e.message}")
                     Toast.makeText(requireContext(), "Something went wrong...", Toast.LENGTH_SHORT).show()
                 }
@@ -75,7 +84,6 @@ class SetsFragment : Fragment() {
 
                 // got to the next screen
                 Log.d(TAG, "Moving to the next screen")
-                val action = SetsFragmentDirections.actionSetsFragmentToSetOptionFragment()
                 findNavController().navigate(action)
 
             }
